@@ -73,6 +73,7 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
 const lat = {{ $rumah->latitude }};
 const lng = {{ $rumah->longitude }};
 const map = L.map('detail-map').setView([lat, lng], 17);
@@ -87,5 +88,6 @@ const icon = L.divIcon({
 L.marker([lat, lng], { icon }).addTo(map)
     .bindPopup('<b>{{ $rumah->nama_pemilik }}</b><br>{{ $rumah->alamat_lengkap }}')
     .openPopup();
+}); // end DOMContentLoaded
 </script>
 @endpush

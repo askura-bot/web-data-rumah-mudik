@@ -33,7 +33,7 @@
 
     {{-- ── Filter ── --}}
     <form method="GET" action="{{ route('admin.dashboard') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {{-- NIK --}}
             <div>
                 <label class="block text-xs font-600 text-gray-600 mb-1.5">Cari NIK</label>
@@ -41,23 +41,10 @@
                     class="filter-input w-full" placeholder="Masukkan NIK...">
             </div>
 
-            {{-- Kabupaten --}}
-            <div>
-                <label class="block text-xs font-600 text-gray-600 mb-1.5">Kabupaten / Kota</label>
-                <select name="kabupaten" id="filter_kabupaten" class="filter-input w-full">
-                    <option value="">Semua Kabupaten</option>
-                    @foreach($kabupatens as $kab)
-                        <option value="{{ $kab->nama }}" {{ request('kabupaten') == $kab->nama ? 'selected' : '' }}>
-                            {{ $kab->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
             {{-- Kecamatan --}}
             <div>
                 <label class="block text-xs font-600 text-gray-600 mb-1.5">Kecamatan</label>
-                <select name="kecamatan" id="filter_kecamatan" class="filter-input w-full">
+                <select name="kecamatan" class="filter-input w-full">
                     <option value="">Semua Kecamatan</option>
                     @foreach($kecamatans as $kec)
                         <option value="{{ $kec->nama }}" {{ request('kecamatan') == $kec->nama ? 'selected' : '' }}>
@@ -165,6 +152,7 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
 // ─── Peta Admin ──────────────────────────────────────────────────────────────
 const adminMap = L.map('admin-map').setView([-7.0051, 110.4381], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -205,23 +193,6 @@ fetch(`/admin/api/map-data?${params}`)
         });
         adminMap.fitBounds(bounds, { padding: [30, 30] });
     });
-
-// ─── Filter Kecamatan Dinamis ─────────────────────────────────────────────────
-document.getElementById('filter_kabupaten').addEventListener('change', async function () {
-    const kecSel = document.getElementById('filter_kecamatan');
-    kecSel.innerHTML = '<option value="">Semua Kecamatan</option>';
-    if (!this.value) return;
-
-    try {
-        const res  = await fetch(`/api/kecamatan?kabupaten=${encodeURIComponent(this.value)}`);
-        const data = await res.json();
-        data.forEach(kec => {
-            const opt = document.createElement('option');
-            opt.value = kec.nama;
-            opt.textContent = kec.nama;
-            kecSel.appendChild(opt);
-        });
-    } catch (e) {}
-});
+}); // end DOMContentLoaded
 </script>
 @endpush

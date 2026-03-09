@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
+    const KABUPATEN = 'Kabupaten Semarang';
+
     public function index()
     {
-        $kabupatens = Kabupaten::orderBy('nama')->get();
-        return view('user.form', compact('kabupatens'));
+        $kecamatans = Kecamatan::whereHas('kabupaten', function ($q) {
+            $q->where('nama', self::KABUPATEN);
+        })->orderBy('nama')->get();
+
+        return view('user.form', compact('kecamatans'));
     }
 
     public function store(Request $request)
@@ -26,24 +31,22 @@ class UserController extends Controller
             'alamat_lengkap'         => 'required|string',
             'rt'                     => 'required|string|max:5',
             'rw'                     => 'required|string|max:5',
-            'kabupaten'              => 'required|string',
             'kecamatan'              => 'required|string',
             'tanggal_mulai_mudik'    => 'required|date',
             'tanggal_selesai_mudik'  => 'required|date|after_or_equal:tanggal_mulai_mudik',
             'foto_rumah'             => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ], [
-            'nik.required'                   => 'NIK wajib diisi.',
-            'nik.digits'                     => 'NIK harus 16 digit.',
-            'nama_pemilik.required'          => 'Nama pemilik wajib diisi.',
-            'latitude.required'              => 'Titik lokasi wajib dipilih di peta.',
-            'longitude.required'             => 'Titik lokasi wajib dipilih di peta.',
-            'alamat_lengkap.required'        => 'Alamat lengkap wajib diisi.',
-            'rt.required'                    => 'RT wajib diisi.',
-            'rw.required'                    => 'RW wajib diisi.',
-            'kabupaten.required'             => 'Kabupaten wajib dipilih.',
-            'kecamatan.required'             => 'Kecamatan wajib dipilih.',
-            'tanggal_mulai_mudik.required'   => 'Tanggal mulai mudik wajib diisi.',
-            'tanggal_selesai_mudik.required' => 'Tanggal selesai mudik wajib diisi.',
+            'nik.required'                         => 'NIK wajib diisi.',
+            'nik.digits'                           => 'NIK harus 16 digit.',
+            'nama_pemilik.required'                => 'Nama pemilik wajib diisi.',
+            'latitude.required'                    => 'Titik lokasi wajib dipilih di peta.',
+            'longitude.required'                   => 'Titik lokasi wajib dipilih di peta.',
+            'alamat_lengkap.required'              => 'Alamat lengkap wajib diisi.',
+            'rt.required'                          => 'RT wajib diisi.',
+            'rw.required'                          => 'RW wajib diisi.',
+            'kecamatan.required'                   => 'Kecamatan wajib dipilih.',
+            'tanggal_mulai_mudik.required'         => 'Tanggal mulai mudik wajib diisi.',
+            'tanggal_selesai_mudik.required'       => 'Tanggal selesai mudik wajib diisi.',
             'tanggal_selesai_mudik.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
         ]);
 
@@ -54,6 +57,7 @@ class UserController extends Controller
 
         RumahMudik::create([
             ...$validated,
+            'kabupaten'  => self::KABUPATEN,
             'foto_rumah' => $fotoPath,
         ]);
 
@@ -63,22 +67,5 @@ class UserController extends Controller
     public function success()
     {
         return view('user.success');
-    }
-
-    // API: Ambil kecamatan berdasarkan kabupaten (untuk dropdown dinamis)
-    public function getKecamatan(Request $request)
-    {
-        $kabupatenNama = $request->query('kabupaten');
-        $kabupaten = Kabupaten::where('nama', $kabupatenNama)->first();
-
-        if (!$kabupaten) {
-            return response()->json([]);
-        }
-
-        $kecamatans = Kecamatan::where('kabupaten_id', $kabupaten->id)
-            ->orderBy('nama')
-            ->get(['nama']);
-
-        return response()->json($kecamatans);
     }
 }

@@ -6,11 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Pendataan Rumah Mudik')</title>
 
-    {{-- Tailwind CSS via CDN (ganti dengan Vite jika sudah setup npm) --}}
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- Tailwind CSS via Vite --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    {{-- Leaflet CSS --}}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    {{-- Leaflet CSS sudah di-bundle via app.js (NPM) --}}
 
     {{-- Google Fonts --}}
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,8 +25,7 @@
 
     @yield('content')
 
-    {{-- Leaflet JS --}}
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    {{-- Leaflet JS sudah di-bundle via app.js (NPM) --}}
 
     @stack('scripts')
 </body>

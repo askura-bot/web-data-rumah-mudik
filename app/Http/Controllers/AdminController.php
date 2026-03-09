@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kabupaten;
+use App\Models\Kecamatan;
 use App\Models\RumahMudik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
+    const KABUPATEN = 'Kabupaten Semarang';
+
     // ─── Auth ───────────────────────────────────────────────────────────────
 
     public function loginForm()
@@ -21,13 +24,9 @@ class AdminController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'password' => 'required',
-        ]);
+        $request->validate(['password' => 'required']);
 
-        $adminPassword = config('app.admin_password', 'admin123');
-
-        if ($request->password === $adminPassword) {
+        if ($request->password === config('app.admin_password', 'admin123')) {
             Session::put('admin_logged_in', true);
             return redirect()->route('admin.dashboard');
         }
@@ -47,33 +46,22 @@ class AdminController extends Controller
     {
         $query = RumahMudik::query();
 
-        // Filter kabupaten
-        if ($request->filled('kabupaten')) {
-            $query->where('kabupaten', $request->kabupaten);
-        }
-
-        // Filter kecamatan
         if ($request->filled('kecamatan')) {
             $query->where('kecamatan', $request->kecamatan);
         }
 
-        // Cari berdasarkan NIK
         if ($request->filled('nik')) {
             $query->where('nik', 'like', '%' . $request->nik . '%');
         }
 
-        $rumahList   = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
-        $kabupatens  = Kabupaten::orderBy('nama')->get();
-        $kecamatans  = collect();
+        $rumahList  = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
-        if ($request->filled('kabupaten')) {
-            $kab = Kabupaten::where('nama', $request->kabupaten)->first();
-            if ($kab) {
-                $kecamatans = $kab->kecamatans()->orderBy('nama')->get();
-            }
-        }
+        // Ambil semua kecamatan Kabupaten Semarang langsung
+        $kecamatans = Kecamatan::whereHas('kabupaten', function ($q) {
+            $q->where('nama', self::KABUPATEN);
+        })->orderBy('nama')->get();
 
-        return view('admin.dashboard', compact('rumahList', 'kabupatens', 'kecamatans'));
+        return view('admin.dashboard', compact('rumahList', 'kecamatans'));
     }
 
     public function show(RumahMudik $rumah)
@@ -91,9 +79,6 @@ class AdminController extends Controller
             'tanggal_mulai_mudik', 'tanggal_selesai_mudik'
         );
 
-        if ($request->filled('kabupaten')) {
-            $query->where('kabupaten', $request->kabupaten);
-        }
         if ($request->filled('kecamatan')) {
             $query->where('kecamatan', $request->kecamatan);
         }

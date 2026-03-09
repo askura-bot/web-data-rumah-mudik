@@ -131,23 +131,26 @@
             </div>
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                    <label class="form-label">Kabupaten / Kota <span class="text-red-500">*</span></label>
-                    <select name="kabupaten" id="kabupaten_select"
-                        class="form-input @error('kabupaten') border-red-400 @enderror" required>
-                        <option value="">-- Pilih Kabupaten --</option>
-                        @foreach($kabupatens as $kab)
-                            <option value="{{ $kab->nama }}" {{ old('kabupaten') == $kab->nama ? 'selected' : '' }}>
-                                {{ $kab->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('kabupaten')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                    <label class="form-label">Kabupaten / Kota</label>
+                    <div class="form-input bg-gray-50 text-gray-500 cursor-not-allowed flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        </svg>
+                        Kabupaten Semarang
+                    </div>
+                    {{-- Hidden input agar tetap terkirim ke server --}}
+                    <input type="hidden" name="kabupaten" value="Kabupaten Semarang">
                 </div>
                 <div>
                     <label class="form-label">Kecamatan <span class="text-red-500">*</span></label>
-                    <select name="kecamatan" id="kecamatan_select"
+                    <select name="kecamatan"
                         class="form-input @error('kecamatan') border-red-400 @enderror" required>
                         <option value="">-- Pilih Kecamatan --</option>
+                        @foreach($kecamatans as $kec)
+                            <option value="{{ $kec->nama }}" {{ old('kecamatan') == $kec->nama ? 'selected' : '' }}>
+                                {{ $kec->nama }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('kecamatan')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -214,6 +217,7 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
 // ─── Peta Leaflet ─────────────────────────────────────────────────────────────
 let map, marker;
 const defaultCenter = [-7.0051, 110.4381]; // Semarang
@@ -287,43 +291,6 @@ if (navigator.geolocation) {
     initMap(...defaultCenter);
 }
 
-// ─── Dropdown Kecamatan Dinamis ────────────────────────────────────────────────
-document.getElementById('kabupaten_select').addEventListener('change', async function () {
-    const kecSel = document.getElementById('kecamatan_select');
-    kecSel.innerHTML = '<option value="">Memuat...</option>';
-    kecSel.disabled = true;
-
-    if (!this.value) {
-        kecSel.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
-        kecSel.disabled = false;
-        return;
-    }
-
-    try {
-        const res  = await fetch(`/api/kecamatan?kabupaten=${encodeURIComponent(this.value)}`);
-        const data = await res.json();
-        kecSel.innerHTML = '<option value="">-- Pilih Kecamatan --</option>';
-        data.forEach(kec => {
-            const opt = document.createElement('option');
-            opt.value = kec.nama;
-            opt.textContent = kec.nama;
-            @if(old('kecamatan'))
-            if (kec.nama === '{{ old('kecamatan') }}') opt.selected = true;
-            @endif
-            kecSel.appendChild(opt);
-        });
-    } catch (e) {
-        kecSel.innerHTML = '<option value="">Gagal memuat kecamatan</option>';
-    } finally {
-        kecSel.disabled = false;
-    }
-});
-
-// Trigger on page load jika ada old value
-@if(old('kabupaten'))
-document.getElementById('kabupaten_select').dispatchEvent(new Event('change'));
-@endif
-
 // ─── Preview Foto ──────────────────────────────────────────────────────────────
 function previewFoto(input) {
     if (!input.files?.[0]) return;
@@ -335,5 +302,6 @@ function previewFoto(input) {
     };
     reader.readAsDataURL(input.files[0]);
 }
+}); // end DOMContentLoaded
 </script>
 @endpush
