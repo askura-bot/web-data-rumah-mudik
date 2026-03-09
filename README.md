@@ -68,14 +68,14 @@ database/
 - ✅ Peta interaktif dengan GPS otomatis (Leaflet + OpenStreetMap)
 - ✅ Geser marker untuk akurasi lokasi
 - ✅ Alamat terisi otomatis via Nominatim (reverse geocoding)
-- ✅ Dropdown kecamatan dinamis berdasarkan kabupaten
+- ✅ Dropdown pemilihan kecamatan 
 - ✅ Upload foto rumah (opsional)
 - ✅ Validasi NIK 16 digit
 
 ### Admin
 - ✅ Login dengan password saja
 - ✅ Tabel dengan pagination
-- ✅ Filter kabupaten + kecamatan
+- ✅ Filter berdasarkan kecamatan
 - ✅ Cari berdasarkan NIK
 - ✅ Peta sebaran semua titik rumah
 - ✅ Halaman detail per rumah
