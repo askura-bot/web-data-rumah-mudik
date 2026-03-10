@@ -1,40 +1,408 @@
 @extends('layouts.app')
-
-@section('title', 'Daftar Rumah Mudik')
+@section('title', 'Daftar Rumah Mudik — Kabupaten Semarang')
 
 @push('styles')
 <style>
-    #map { height: 380px; width: 100%; }
-    .form-input {
-        @apply w-full px-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition;
-    }
-    .form-label {
-        @apply block text-sm font-600 text-gray-700 mb-1.5;
-    }
+/* ── Google Fonts ─────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ── CSS Variables ────────────────────────────── */
+:root {
+    --teal:      #0f6b5c;
+    --teal-mid:  #148a73;
+    --teal-light:#e6f4f1;
+    --gold:      #c9932a;
+    --gold-light:#fdf3e0;
+    --cream:     #faf7f2;
+    --ink:       #1a1a2e;
+    --muted:     #6b7280;
+}
+
+body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
+
+/* ── Hero ─────────────────────────────────────── */
+.hero {
+    background: var(--teal);
+    position: relative;
+    overflow: hidden;
+    padding: 3rem 1rem 5rem;
+}
+
+/* Ornamen ketupat SVG background */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-size: 60px 60px;
+}
+
+/* Bintang dekoratif kanan */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(201,147,42,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.hero-wave {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 48px;
+    overflow: hidden;
+}
+.hero-wave svg { width: 100%; height: 100%; }
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201,147,42,0.2);
+    border: 1px solid rgba(201,147,42,0.4);
+    color: #f0c96a;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 99px;
+    margin-bottom: 1rem;
+}
+
+.hero h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    position: relative;
+    z-index: 1;
+}
+
+.hero p {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ornamen bintang kecil */
+.star-deco {
+    position: absolute;
+    z-index: 1;
+}
+.star-deco svg { opacity: 0.3; }
+
+/* ── Step Cards ───────────────────────────────── */
+.step-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 1.5rem;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+    animation: slideUp 0.4s ease both;
+    position: relative;
+    overflow: hidden;
+}
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal), var(--gold));
+    border-radius: 20px 20px 0 0;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.step-card:nth-child(1) { animation-delay: 0.05s; }
+.step-card:nth-child(2) { animation-delay: 0.10s; }
+.step-card:nth-child(3) { animation-delay: 0.15s; }
+.step-card:nth-child(4) { animation-delay: 0.20s; }
+.step-card:nth-child(5) { animation-delay: 0.25s; }
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+}
+.step-num {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-mid));
+    color: white;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(15,107,92,0.35);
+}
+.step-num.optional {
+    background: linear-gradient(135deg, #9ca3af, #6b7280);
+    box-shadow: 0 2px 6px rgba(107,114,128,0.3);
+}
+.step-title {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 0.95rem;
+}
+.step-subtitle {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 2px;
+}
+
+/* ── Form Inputs ──────────────────────────────── */
+.field-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+}
+.field-label .req { color: #ef4444; }
+
+.field-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--ink);
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+}
+.field-input:focus {
+    border-color: var(--teal-mid);
+    box-shadow: 0 0 0 3px rgba(20,138,115,0.12);
+}
+.field-input.error { border-color: #f87171; }
+.field-input.readonly {
+    background: #f9fafb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+.field-input::placeholder { color: #c4c9d4; }
+
+select.field-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+.field-hint { font-size: 0.72rem; color: #9ca3af; margin-top: 4px; }
+.field-error { font-size: 0.72rem; color: #ef4444; margin-top: 4px; }
+
+/* ── Kabupaten locked field ───────────────────── */
+.locked-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+.locked-field .lock-icon { color: var(--teal-mid); flex-shrink: 0; }
+
+/* ── Peta ─────────────────────────────────────── */
+#map {
+    height: 360px;
+    border-radius: 14px;
+    border: 1.5px solid #e5e7eb;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+.coord-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+.coord-item {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--teal-light);
+    border: 1px solid rgba(15,107,92,0.15);
+    border-radius: 10px;
+}
+.coord-label { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; }
+.coord-value { font-size: 12px; color: #374151; margin-top: 2px; font-family: monospace; }
+
+.geocode-spinner {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--teal-mid);
+    font-weight: 600;
+}
+.geocode-spinner.active { display: flex; }
+.spinner-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal-mid);
+    animation: pulse 1.2s ease-in-out infinite;
+}
+.spinner-dot:nth-child(2) { animation-delay: 0.2s; }
+.spinner-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* ── Upload Foto ──────────────────────────────── */
+.upload-zone {
+    border: 2px dashed #d1d5db;
+    border-radius: 14px;
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+}
+.upload-zone:hover {
+    border-color: var(--teal-mid);
+    background: var(--teal-light);
+}
+.upload-zone.has-file { border-style: solid; border-color: var(--teal-mid); }
+
+/* ── Submit Button ────────────────────────────── */
+.btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-mid) 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 14px 24px;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 20px rgba(15,107,92,0.35);
+    position: relative;
+    overflow: hidden;
+}
+.btn-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,147,42,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15,107,92,0.4); }
+.btn-submit:hover::before { opacity: 1; }
+.btn-submit:active { transform: translateY(0); }
+
+/* ── Error Banner ─────────────────────────────── */
+.error-banner {
+    background: #fff5f5;
+    border: 1.5px solid #fecaca;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Footer note ──────────────────────────────── */
+.footer-note {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.5rem;
+    padding-bottom: 2rem;
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 640px) {
+    .step-card { padding: 1.25rem; }
+    .hero { padding-bottom: 4rem; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>
 @endpush
 
 @section('content')
-{{-- Header --}}
-<div class="bg-linear-to-br from-emerald-700 to-emerald-500 text-white py-10 px-4">
-    <div class="max-w-2xl mx-auto text-center">
-        <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 rounded-2xl mb-4">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
+
+{{-- ══════════════════════════════════════════════
+     HERO HEADER
+══════════════════════════════════════════════ --}}
+<div class="hero">
+
+    {{-- Ornamen bintang --}}
+    <div class="star-deco" style="top:16px;left:16px">
+        <svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="#c9932a" stroke-width="1.5"/></svg>
+    </div>
+    <div class="star-deco" style="bottom:60px;left:10%">
+        <svg width="24" height="24" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="#c9932a" stroke-width="1.5"/></svg>
+    </div>
+    <div class="star-deco" style="top:30px;right:12%">
+        <svg width="32" height="32" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="#c9932a" stroke-width="1.5"/></svg>
+    </div>
+
+    <div style="max-width:640px;margin:0 auto;text-align:center;position:relative;z-index:2">
+        <div class="hero-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Lebaran 1446 H
         </div>
-        <h1 class="text-2xl font-800 tracking-tight">Pendataan Rumah Mudik</h1>
-        <p class="mt-2 text-emerald-100 text-sm">Daftarkan rumah Anda yang ditinggal selama mudik Lebaran</p>
+        <h1>Titipkan Keamanan<br>Rumah Anda</h1>
+        <p>Daftarkan rumah yang ditinggal mudik agar dapat<br>dipantau oleh petugas keamanan setempat</p>
+
+        {{-- Statistik kecil --}}
+        <div style="display:flex;justify-content:center;gap:2rem;margin-top:1.5rem;position:relative;z-index:1">
+            <div style="text-align:center">
+                <div style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:#f0c96a">✓</div>
+                <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">Gratis</div>
+            </div>
+            <div style="width:1px;background:rgba(255,255,255,0.15)"></div>
+            <div style="text-align:center">
+                <div style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:#f0c96a">🏠</div>
+                <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">Mudah & Cepat</div>
+            </div>
+            <div style="width:1px;background:rgba(255,255,255,0.15)"></div>
+            <div style="text-align:center">
+                <div style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:#f0c96a">🛡</div>
+                <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">Terpantau</div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Wave SVG --}}
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,48 L0,24 C240,0 480,48 720,24 C960,0 1200,48 1440,24 L1440,48 Z" fill="#faf7f2"/>
+        </svg>
     </div>
 </div>
 
-<div class="max-w-2xl mx-auto px-4 py-8">
+{{-- ══════════════════════════════════════════════
+     FORM
+══════════════════════════════════════════════ --}}
+<div style="max-width:640px;margin:0 auto;padding:2rem 1rem;">
 
     @if($errors->any())
-    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-        <p class="text-sm font-600 text-red-700 mb-1">Terdapat kesalahan pada form:</p>
-        <ul class="list-disc list-inside text-sm text-red-600 space-y-0.5">
+    <div class="error-banner">
+        <p style="font-size:0.85rem;font-weight:700;color:#dc2626;margin-bottom:4px">
+            ⚠ Terdapat kesalahan pada form:
+        </p>
+        <ul style="list-style:disc;padding-left:1.2rem;font-size:0.8rem;color:#ef4444">
             @foreach($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
@@ -42,175 +410,239 @@
     </div>
     @endif
 
-    <form action="{{ route('user.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+    <form action="{{ route('user.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        {{-- ── Data Pemilik ── --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-700 text-gray-800 mb-5 flex items-center gap-2">
-                <span class="w-6 h-6 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-xs font-800">1</span>
-                Data Pemilik
-            </h2>
-            <div class="grid grid-cols-1 gap-4">
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+
+        {{-- ══ 1. DATA PEMILIK ══════════════════════════ --}}
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-num">1</div>
                 <div>
-                    <label class="form-label">NIK <span class="text-red-500">*</span></label>
+                    <div class="step-title">Data Pemilik</div>
+                    <div class="step-subtitle">Identitas sesuai KTP</div>
+                </div>
+            </div>
+
+            <div style="display:grid;gap:1rem">
+                <div>
+                    <label class="field-label">NIK <span class="req">*</span></label>
                     <input type="text" name="nik" value="{{ old('nik') }}"
-                        class="form-input @error('nik') border-red-400 @enderror"
-                        placeholder="16 digit NIK" maxlength="16" pattern="\d{16}"
+                        class="field-input @error('nik') error @enderror"
+                        placeholder="16 digit Nomor Induk Kependudukan"
+                        maxlength="16" pattern="\d{16}"
                         oninput="this.value=this.value.replace(/\D/g,'')" required>
-                    <p class="text-xs text-gray-400 mt-1">NIK digunakan sebagai identifikasi unik pemilik</p>
-                    @error('nik')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                    <p class="field-hint">NIK digunakan sebagai identifikasi unik — 1 NIK bisa mendaftarkan lebih dari 1 rumah</p>
+                    @error('nik')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="form-label">Nama Pemilik <span class="text-red-500">*</span></label>
+                    <label class="field-label">Nama Lengkap Pemilik <span class="req">*</span></label>
                     <input type="text" name="nama_pemilik" value="{{ old('nama_pemilik') }}"
-                        class="form-input @error('nama_pemilik') border-red-400 @enderror"
-                        placeholder="Nama lengkap sesuai KTP" required>
-                    @error('nama_pemilik')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        class="field-input @error('nama_pemilik') error @enderror"
+                        placeholder="Nama sesuai KTP" required>
+                    @error('nama_pemilik')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
             </div>
         </div>
 
-        {{-- ── Lokasi Rumah ── --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-700 text-gray-800 mb-2 flex items-center gap-2">
-                <span class="w-6 h-6 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-xs font-800">2</span>
-                Titik Lokasi Rumah
-            </h2>
-            <p class="text-xs text-gray-400 mb-4">Izinkan akses lokasi agar peta terpusat ke posisi Anda. Geser marker untuk menyesuaikan titik yang tepat.</p>
-
-            <div id="map" class="mb-4 border border-gray-200"></div>
-
-            <div class="grid grid-cols-2 gap-3 mb-4">
+        {{-- ══ 2. TITIK LOKASI ══════════════════════════ --}}
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-num">2</div>
                 <div>
-                    <label class="form-label">Latitude</label>
-                    <input type="text" id="latitude_display" readonly
-                        class="form-input bg-gray-50 text-gray-500 cursor-not-allowed" placeholder="Otomatis dari peta">
+                    <div class="step-title">Titik Lokasi Rumah</div>
+                    <div class="step-subtitle">Geser pin untuk akurasi lebih baik</div>
+                </div>
+            </div>
+
+            <div id="map"></div>
+
+            <div class="coord-box">
+                <div class="coord-item">
+                    <div class="coord-label">Latitude</div>
+                    <div class="coord-value" id="lat-display">—</div>
                     <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude') }}" required>
                 </div>
-                <div>
-                    <label class="form-label">Longitude</label>
-                    <input type="text" id="longitude_display" readonly
-                        class="form-input bg-gray-50 text-gray-500 cursor-not-allowed" placeholder="Otomatis dari peta">
+                <div class="coord-item">
+                    <div class="coord-label">Longitude</div>
+                    <div class="coord-value" id="lng-display">—</div>
                     <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude') }}" required>
                 </div>
             </div>
 
             <div>
-                <label class="form-label">Alamat Lengkap <span class="text-red-500">*</span>
-                    <span id="geocoding_status" class="text-xs font-400 text-emerald-600 ml-2 hidden">⟳ Mengambil alamat...</span>
+                <label class="field-label" style="display:flex;align-items:center;gap:8px">
+                    Alamat Lengkap <span class="req">*</span>
+                    <span class="geocode-spinner" id="geocoding_status">
+                        <span class="spinner-dot"></span>
+                        <span class="spinner-dot"></span>
+                        <span class="spinner-dot"></span>
+                        Mengambil alamat...
+                    </span>
                 </label>
                 <textarea name="alamat_lengkap" id="alamat_lengkap" rows="3"
-                    class="form-input @error('alamat_lengkap') border-red-400 @enderror"
-                    placeholder="Alamat terisi otomatis saat memilih titik, atau isi manual" required>{{ old('alamat_lengkap') }}</textarea>
-                @error('alamat_lengkap')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                    class="field-input @error('alamat_lengkap') error @enderror"
+                    style="resize:vertical"
+                    placeholder="Terisi otomatis dari titik peta, atau ketik manual" required>{{ old('alamat_lengkap') }}</textarea>
+                @error('alamat_lengkap')<p class="field-error">{{ $message }}</p>@enderror
             </div>
         </div>
 
-        {{-- ── Wilayah ── --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-700 text-gray-800 mb-5 flex items-center gap-2">
-                <span class="w-6 h-6 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-xs font-800">3</span>
-                Wilayah
-            </h2>
-            <div class="grid grid-cols-2 gap-4 mb-4">
+        {{-- ══ 3. WILAYAH ════════════════════════════════ --}}
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-num">3</div>
                 <div>
-                    <label class="form-label">RT <span class="text-red-500">*</span></label>
-                    <input type="text" name="rt" value="{{ old('rt') }}"
-                        class="form-input @error('rt') border-red-400 @enderror"
-                        placeholder="cth: 001" maxlength="5" required>
-                    @error('rt')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="form-label">RW <span class="text-red-500">*</span></label>
-                    <input type="text" name="rw" value="{{ old('rw') }}"
-                        class="form-input @error('rw') border-red-400 @enderror"
-                        placeholder="cth: 003" maxlength="5" required>
-                    @error('rw')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                    <div class="step-title">Wilayah</div>
+                    <div class="step-subtitle">RT, RW, dan kecamatan</div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
                 <div>
-                    <label class="form-label">Kabupaten / Kota</label>
-                    <div class="form-input bg-gray-50 text-gray-500 cursor-not-allowed flex items-center gap-2">
-                        <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <label class="field-label">RT <span class="req">*</span></label>
+                    <input type="text" name="rt" value="{{ old('rt') }}"
+                        class="field-input @error('rt') error @enderror"
+                        placeholder="cth: 001" maxlength="5" required>
+                    @error('rt')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="field-label">RW <span class="req">*</span></label>
+                    <input type="text" name="rw" value="{{ old('rw') }}"
+                        class="field-input @error('rw') error @enderror"
+                        placeholder="cth: 003" maxlength="5" required>
+                    @error('rw')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <div>
+                    <label class="field-label">Kabupaten / Kota</label>
+                    <div class="locked-field">
+                        <svg class="lock-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        Kabupaten Semarang
+                        Kab. Semarang
                     </div>
-                    {{-- Hidden input agar tetap terkirim ke server --}}
                     <input type="hidden" name="kabupaten" value="Kabupaten Semarang">
                 </div>
                 <div>
-                    <label class="form-label">Kecamatan <span class="text-red-500">*</span></label>
-                    <select name="kecamatan"
-                        class="form-input @error('kecamatan') border-red-400 @enderror" required>
-                        <option value="">-- Pilih Kecamatan --</option>
+                    <label class="field-label">Kecamatan <span class="req">*</span></label>
+                    <select name="kecamatan" class="field-input @error('kecamatan') error @enderror" required>
+                        <option value="">Pilih Kecamatan</option>
                         @foreach($kecamatans as $kec)
                             <option value="{{ $kec->nama }}" {{ old('kecamatan') == $kec->nama ? 'selected' : '' }}>
                                 {{ $kec->nama }}
                             </option>
                         @endforeach
                     </select>
-                    @error('kecamatan')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                    @error('kecamatan')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
             </div>
         </div>
 
-        {{-- ── Jadwal Mudik ── --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-700 text-gray-800 mb-5 flex items-center gap-2">
-                <span class="w-6 h-6 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center text-xs font-800">4</span>
-                Jadwal Mudik
-            </h2>
-            <div class="grid grid-cols-2 gap-4">
+        {{-- ══ 4. JADWAL MUDIK ═══════════════════════════ --}}
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-num">4</div>
                 <div>
-                    <label class="form-label">Tanggal Berangkat <span class="text-red-500">*</span></label>
+                    <div class="step-title">Jadwal Mudik</div>
+                    <div class="step-subtitle">Periode rumah ditinggalkan</div>
+                </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+                <div>
+                    <label class="field-label">Tanggal Berangkat <span class="req">*</span></label>
                     <input type="date" name="tanggal_mulai_mudik" value="{{ old('tanggal_mulai_mudik') }}"
-                        class="form-input @error('tanggal_mulai_mudik') border-red-400 @enderror" required>
-                    @error('tanggal_mulai_mudik')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        class="field-input @error('tanggal_mulai_mudik') error @enderror" required>
+                    @error('tanggal_mulai_mudik')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="form-label">Estimasi Kembali <span class="text-red-500">*</span></label>
+                    <label class="field-label">Estimasi Kembali <span class="req">*</span></label>
                     <input type="date" name="tanggal_selesai_mudik" value="{{ old('tanggal_selesai_mudik') }}"
-                        class="form-input @error('tanggal_selesai_mudik') border-red-400 @enderror" required>
-                    @error('tanggal_selesai_mudik')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        class="field-input @error('tanggal_selesai_mudik') error @enderror" required>
+                    @error('tanggal_selesai_mudik')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
+            </div>
+
+            {{-- Info banner --}}
+            <div style="margin-top:1rem;display:flex;gap:10px;padding:10px 14px;background:var(--gold-light);border-radius:10px;border:1px solid rgba(201,147,42,0.25)">
+                <svg style="flex-shrink:0;margin-top:1px" width="16" height="16" fill="none" stroke="#c9932a" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p style="font-size:0.75rem;color:#92650a;line-height:1.5">
+                    Data jadwal ini akan digunakan oleh petugas untuk menentukan jadwal patroli di sekitar rumah Anda.
+                </p>
             </div>
         </div>
 
-        {{-- ── Foto Rumah ── --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-base font-700 text-gray-800 mb-2 flex items-center gap-2">
-                <span class="w-6 h-6 bg-gray-100 text-gray-500 rounded-lg flex items-center justify-center text-xs font-800">5</span>
-                Foto Rumah <span class="text-xs font-400 text-gray-400">(opsional)</span>
-            </h2>
-            <p class="text-xs text-gray-400 mb-4">Format JPG, PNG, atau WebP. Maks 2MB.</p>
-            <div class="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-emerald-400 transition cursor-pointer"
-                onclick="document.getElementById('foto_rumah').click()">
-                <div id="foto_preview" class="hidden mb-3">
-                    <img id="preview_img" class="mx-auto max-h-40 rounded-lg object-cover" src="" alt="">
+        {{-- ══ 5. FOTO RUMAH ═════════════════════════════ --}}
+        <div class="step-card">
+            <div class="step-header">
+                <div class="step-num optional">5</div>
+                <div>
+                    <div class="step-title">Foto Rumah <span style="font-weight:400;font-size:0.8rem;color:#9ca3af">(opsional)</span></div>
+                    <div class="step-subtitle">Membantu petugas mengenali rumah</div>
                 </div>
+            </div>
+
+            <div class="upload-zone" id="upload-zone" onclick="document.getElementById('foto_rumah').click()">
+                {{-- State: processing --}}
+                <div id="foto_processing" style="display:none">
+                    <div style="width:48px;height:48px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" style="animation:spin 1s linear infinite">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </div>
+                    <p style="font-size:0.85rem;font-weight:600;color:var(--teal)">Mengompres gambar...</p>
+                </div>
+
+                {{-- State: preview --}}
+                <div id="foto_preview" style="display:none;margin-bottom:10px">
+                    <img id="preview_img" style="max-height:160px;border-radius:10px;object-fit:cover;margin:0 auto;display:block" src="" alt="">
+                    {{-- Info ukuran --}}
+                    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px">
+                        <span id="size_before" style="font-size:11px;color:#9ca3af;text-decoration:line-through"></span>
+                        <svg width="12" height="12" fill="none" stroke="#34d399" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        <span id="size_after" style="font-size:11px;font-weight:700;color:#059669"></span>
+                        <span id="size_saving" style="font-size:10px;background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:99px;font-weight:700"></span>
+                    </div>
+                    <p style="font-size:11px;color:#9ca3af;margin-top:6px">Klik untuk ganti foto</p>
+                </div>
+
+                {{-- State: placeholder --}}
                 <div id="foto_placeholder">
-                    <svg class="mx-auto w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                    <p class="text-sm text-gray-400">Klik untuk upload foto rumah</p>
+                    <div style="width:48px;height:48px;background:var(--teal-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                        <svg width="22" height="22" fill="none" stroke="var(--teal)" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <p style="font-size:0.85rem;font-weight:600;color:#374151">Klik untuk pilih foto</p>
+                    <p style="font-size:0.75rem;color:#9ca3af;margin-top:4px">JPG, PNG atau WebP · Otomatis dikompres</p>
                 </div>
-                <input type="file" name="foto_rumah" id="foto_rumah" accept="image/*" class="hidden"
-                    onchange="previewFoto(this)">
+
+                {{-- Input file asli (hanya untuk trigger picker, tidak disubmit) --}}
+                <input type="file" id="foto_rumah" accept="image/*" style="display:none">
             </div>
+
+            {{-- Hidden input yang menyimpan hasil kompres (base64) → dikirim ke server --}}
+            <input type="hidden" name="foto_rumah_compressed" id="foto_rumah_compressed">
         </div>
 
-        {{-- Submit --}}
-        <button type="submit"
-            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-700 py-3.5 px-6 rounded-2xl transition shadow-lg shadow-emerald-200 flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-            Daftarkan Rumah Mudik
-        </button>
+        </div>{{-- end cards --}}
+
+        {{-- ══ SUBMIT ════════════════════════════════════ --}}
+        <div style="margin-top:1.5rem">
+            <button type="submit" class="btn-submit">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Daftarkan Rumah Mudik Saya
+            </button>
+            <p class="footer-note">Data Anda aman dan hanya digunakan untuk keperluan patroli keamanan</p>
+        </div>
     </form>
 </div>
 @endsection
@@ -218,20 +650,30 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
 // ─── Peta Leaflet ─────────────────────────────────────────────────────────────
 let map, marker;
-const defaultCenter = [-7.0051, 110.4381]; // Semarang
+const defaultCenter = [-7.1751, 110.4028]; // Kabupaten Semarang
 
 function initMap(lat, lng) {
-    map = L.map('map').setView([lat, lng], 16);
+    map = L.map('map', { zoomControl: true }).setView([lat, lng], 16);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
     }).addTo(map);
 
     const icon = L.divIcon({
-        html: `<div style="background:#059669;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
-        iconSize: [28, 28], iconAnchor: [14, 28],
+        html: `<div style="
+            width:32px;height:32px;
+            background:linear-gradient(135deg,#0f6b5c,#148a73);
+            border-radius:50% 50% 50% 0;
+            transform:rotate(-45deg);
+            border:3px solid white;
+            box-shadow:0 3px 10px rgba(15,107,92,0.5)">
+        </div>`,
+        iconSize: [32, 32], iconAnchor: [16, 32],
+        className: '',
     });
 
     marker = L.marker([lat, lng], { draggable: true, icon }).addTo(map);
@@ -254,15 +696,15 @@ function initMap(lat, lng) {
 function updateCoords(lat, lng) {
     document.getElementById('latitude').value  = lat.toFixed(7);
     document.getElementById('longitude').value = lng.toFixed(7);
-    document.getElementById('latitude_display').value  = lat.toFixed(7);
-    document.getElementById('longitude_display').value = lng.toFixed(7);
+    document.getElementById('lat-display').textContent = lat.toFixed(6);
+    document.getElementById('lng-display').textContent = lng.toFixed(6);
 }
 
-// Reverse Geocoding via Nominatim (GRATIS, tanpa API key)
 let geocodeTimeout;
 function reverseGeocode(lat, lng) {
     clearTimeout(geocodeTimeout);
-    document.getElementById('geocoding_status').classList.remove('hidden');
+    const spinner = document.getElementById('geocoding_status');
+    spinner.classList.add('active');
     geocodeTimeout = setTimeout(async () => {
         try {
             const resp = await fetch(
@@ -276,12 +718,11 @@ function reverseGeocode(lat, lng) {
         } catch (err) {
             console.warn('Geocode gagal:', err);
         } finally {
-            document.getElementById('geocoding_status').classList.add('hidden');
+            spinner.classList.remove('active');
         }
     }, 800);
 }
 
-// Ambil GPS perangkat
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
         pos => initMap(pos.coords.latitude, pos.coords.longitude),
@@ -291,17 +732,89 @@ if (navigator.geolocation) {
     initMap(...defaultCenter);
 }
 
-// ─── Preview Foto ──────────────────────────────────────────────────────────────
-function previewFoto(input) {
-    if (!input.files?.[0]) return;
+// ─── Kompresi & Preview Foto (Canvas API) ─────────────────────────────────────
+const MAX_WIDTH    = 1280;   // px — lebar maksimum output
+const MAX_HEIGHT   = 1280;   // px — tinggi maksimum output
+const QUALITY      = 0.80;   // 0–1 kualitas JPEG (0.80 = cukup tajam, ukuran kecil)
+const MAX_SIZE_MB  = 1.5;    // jika setelah kompres masih > ini, turunkan quality
+
+document.getElementById('foto_rumah').addEventListener('change', function () {
+    const file = this.files?.[0];
+    if (!file) return;
+
+    // Validasi tipe
+    if (!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)) {
+        alert('Format file tidak didukung. Gunakan JPG, PNG, atau WebP.');
+        this.value = '';
+        return;
+    }
+
+    // Tampilkan loading
+    document.getElementById('foto_placeholder').style.display  = 'none';
+    document.getElementById('foto_preview').style.display      = 'none';
+    document.getElementById('foto_processing').style.display   = 'block';
+    document.getElementById('upload-zone').classList.remove('has-file');
+
+    const originalSizeKB = (file.size / 1024).toFixed(1);
+
     const reader = new FileReader();
-    reader.onload = e => {
-        document.getElementById('preview_img').src = e.target.result;
-        document.getElementById('foto_preview').classList.remove('hidden');
-        document.getElementById('foto_placeholder').classList.add('hidden');
+    reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+            // ── Hitung dimensi output (jaga rasio) ──────────────────────
+            let { width, height } = img;
+            if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+                width  = Math.round(width  * ratio);
+                height = Math.round(height * ratio);
+            }
+
+            // ── Gambar ke canvas ─────────────────────────────────────────
+            const canvas = document.createElement('canvas');
+            canvas.width  = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // Latar putih (hindari transparan pada PNG → JPEG)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // ── Kompres ke JPEG, turunkan quality jika masih besar ───────
+            let quality    = QUALITY;
+            let dataUrl    = canvas.toDataURL('image/jpeg', quality);
+            let compressedBytes = atob(dataUrl.split(',')[1]).length;
+
+            // Iterasi turunkan quality jika > MAX_SIZE_MB
+            while (compressedBytes > MAX_SIZE_MB * 1024 * 1024 && quality > 0.3) {
+                quality  -= 0.05;
+                dataUrl   = canvas.toDataURL('image/jpeg', quality);
+                compressedBytes = atob(dataUrl.split(',')[1]).length;
+            }
+
+            const compressedSizeKB = (compressedBytes / 1024).toFixed(1);
+            const savingPct = Math.round((1 - compressedBytes / file.size) * 100);
+
+            // ── Isi hidden input (dikirim ke server) ─────────────────────
+            document.getElementById('foto_rumah_compressed').value = dataUrl;
+
+            // ── Tampilkan preview + info ukuran ──────────────────────────
+            document.getElementById('preview_img').src = dataUrl;
+            document.getElementById('size_before').textContent  = originalSizeKB + ' KB';
+            document.getElementById('size_after').textContent   = compressedSizeKB + ' KB';
+            document.getElementById('size_saving').textContent  = savingPct > 0
+                ? '−' + savingPct + '%'
+                : 'Sudah optimal';
+
+            document.getElementById('foto_processing').style.display = 'none';
+            document.getElementById('foto_preview').style.display    = 'block';
+            document.getElementById('upload-zone').classList.add('has-file');
+        };
+        img.src = e.target.result;
     };
-    reader.readAsDataURL(input.files[0]);
-}
+    reader.readAsDataURL(file);
+});
+
 }); // end DOMContentLoaded
 </script>
 @endpush

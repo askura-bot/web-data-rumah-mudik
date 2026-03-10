@@ -34,7 +34,7 @@ class UserController extends Controller
             'kecamatan'              => 'required|string',
             'tanggal_mulai_mudik'    => 'required|date',
             'tanggal_selesai_mudik'  => 'required|date|after_or_equal:tanggal_mulai_mudik',
-            'foto_rumah'             => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'foto_rumah_compressed'  => 'nullable|string', // base64 dari canvas
         ], [
             'nik.required'                         => 'NIK wajib diisi.',
             'nik.digits'                           => 'NIK harus 16 digit.',
@@ -50,15 +50,30 @@ class UserController extends Controller
             'tanggal_selesai_mudik.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
         ]);
 
+        // ── Simpan foto dari base64 (sudah dikompres di frontend) ──────────────
         $fotoPath = null;
-        if ($request->hasFile('foto_rumah')) {
-            $fotoPath = $request->file('foto_rumah')->store('rumah', 'public');
+        $base64 = $request->input('foto_rumah_compressed');
+
+        if ($base64 && str_starts_with($base64, 'data:image/jpeg;base64,')) {
+            $imageData = base64_decode(substr($base64, strlen('data:image/jpeg;base64,')));
+            $filename  = 'rumah/' . uniqid('foto_', true) . '.jpg';
+            Storage::disk('public')->put($filename, $imageData);
+            $fotoPath = $filename;
         }
 
         RumahMudik::create([
-            ...$validated,
-            'kabupaten'  => self::KABUPATEN,
-            'foto_rumah' => $fotoPath,
+            'nik'                   => $validated['nik'],
+            'nama_pemilik'          => $validated['nama_pemilik'],
+            'latitude'              => $validated['latitude'],
+            'longitude'             => $validated['longitude'],
+            'alamat_lengkap'        => $validated['alamat_lengkap'],
+            'rt'                    => $validated['rt'],
+            'rw'                    => $validated['rw'],
+            'kabupaten'             => self::KABUPATEN,
+            'kecamatan'             => $validated['kecamatan'],
+            'tanggal_mulai_mudik'   => $validated['tanggal_mulai_mudik'],
+            'tanggal_selesai_mudik' => $validated['tanggal_selesai_mudik'],
+            'foto_rumah'            => $fotoPath,
         ]);
 
         return redirect()->route('user.success')->with('success', 'Data rumah mudik berhasil disimpan!');

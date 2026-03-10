@@ -49,19 +49,21 @@ class AdminController extends Controller
         if ($request->filled('kecamatan')) {
             $query->where('kecamatan', $request->kecamatan);
         }
-
         if ($request->filled('nik')) {
             $query->where('nik', 'like', '%' . $request->nik . '%');
         }
 
-        $rumahList  = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        // Urutkan: terbaru (default) atau terlama
+        $sort = $request->input('sort', 'terbaru');
+        $query->orderBy('created_at', $sort === 'terlama' ? 'asc' : 'desc');
 
-        // Ambil semua kecamatan Kabupaten Semarang langsung
+        $rumahList  = $query->paginate(15)->withQueryString();
+
         $kecamatans = Kecamatan::whereHas('kabupaten', function ($q) {
             $q->where('nama', self::KABUPATEN);
         })->orderBy('nama')->get();
 
-        return view('admin.dashboard', compact('rumahList', 'kecamatans'));
+        return view('admin.dashboard', compact('rumahList', 'kecamatans', 'sort'));
     }
 
     public function show(RumahMudik $rumah)
