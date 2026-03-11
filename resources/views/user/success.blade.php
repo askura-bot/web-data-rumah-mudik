@@ -1,4 +1,4 @@
-{{-- resources/Views/user/succes.blade.php --}}
+{{-- resources/Views/user/success.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Pendaftaran Berhasil')
 
@@ -7,12 +7,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --teal: #0f6b5c;
-    --teal-mid: #148a73;
-    --gold: #c9932a;
-    --cream: #faf7f2;
+    --primary:       #D70608;   /* merah terang */
+    --primary-dark:  #E60102;   /* merah lebih gelap */
+    --accent:        #DB8138;   /* oranye/karat */
+    --accent-light:  #FDCFB8;   /* peach muda */
+    --light-bg:      #FDFDFE;   /* putih bersih */
+    --ink:           #1a1a2e;
+    --muted:         #6b7280;
+
+    --primary-rgb:   215, 6, 8;
 }
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); margin: 0; }
+
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light-bg); margin: 0; }
 
 .success-page {
     min-height: 100vh;
@@ -22,7 +28,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); m
     padding: 2rem 1rem;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(160deg, #e6f4f1 0%, #faf7f2 50%, #fdf3e0 100%);
+    background: linear-gradient(160deg, var(--accent-light) 0%, var(--light-bg) 50%, #fff6e8 100%);
 }
 
 /* Ornamen latar */
@@ -39,7 +45,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); m
     max-width: 440px;
     width: 100%;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(15,107,92,0.12), 0 4px 16px rgba(0,0,0,0.06);
+    box-shadow: 0 20px 60px rgba(var(--primary-rgb), 0.12), 0 4px 16px rgba(0,0,0,0.06);
     position: relative;
     z-index: 1;
     animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
@@ -55,17 +61,17 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); m
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--teal), #2dd4bf, var(--gold));
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary-dark));
     border-radius: 28px 28px 0 0;
 }
 
 .icon-wrap {
     width: 88px; height: 88px;
-    background: linear-gradient(135deg, var(--teal), var(--teal-mid));
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     margin: 0 auto 1.5rem;
-    box-shadow: 0 8px 24px rgba(15,107,92,0.35);
+    box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.35);
     animation: iconBounce 0.6s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 @keyframes iconBounce {
@@ -77,9 +83,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); m
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #fdf3e0;
-    border: 1px solid rgba(201,147,42,0.3);
-    color: #92650a;
+    background: var(--accent-light);
+    border: 1px solid rgba(219,129,56,0.3);
+    color: #7b4a1e; /* warna coklat tua agar kontras di atas peach */
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -94,13 +100,13 @@ h1 {
     font-family: 'Lora', serif;
     font-size: 1.6rem;
     font-weight: 700;
-    color: #1a1a2e;
+    color: var(--ink);
     margin: 0 0 0.5rem;
     animation: fadeIn 0.4s 0.4s ease both;
 }
 .sub {
     font-size: 0.875rem;
-    color: #6b7280;
+    color: var(--muted);
     line-height: 1.6;
     margin-bottom: 1.75rem;
     animation: fadeIn 0.4s 0.5s ease both;
@@ -112,16 +118,24 @@ h1 {
 }
 
 .info-box {
-    background: linear-gradient(135deg, #e6f4f1, #f0faf8);
-    border: 1px solid rgba(15,107,92,0.15);
+    background: linear-gradient(135deg, var(--accent-light), #fff2e6);
+    border: 1px solid rgba(219,129,56,0.2);
     border-radius: 14px;
     padding: 1rem 1.25rem;
     margin-bottom: 1.5rem;
     text-align: left;
     animation: fadeIn 0.4s 0.6s ease both;
 }
-.info-box p { font-size: 0.8rem; color: #374151; line-height: 1.6; margin: 0; }
-.info-box strong { color: var(--teal); }
+.info-box p {
+    font-size: 0.8rem;
+    color: #374151;
+    line-height: 1.6;
+    margin: 0;
+}
+.info-box strong {
+    color: var(--primary-dark);
+    font-weight: 700;
+}
 
 .btn-again {
     display: inline-flex;
@@ -130,19 +144,24 @@ h1 {
     gap: 8px;
     width: 100%;
     padding: 13px 24px;
-    background: linear-gradient(135deg, var(--teal), var(--teal-mid));
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     font-weight: 700;
     font-size: 0.9rem;
     border-radius: 14px;
     text-decoration: none;
     transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 6px 18px rgba(15,107,92,0.3);
+    box-shadow: 0 6px 18px rgba(var(--primary-rgb), 0.3);
     animation: fadeIn 0.4s 0.7s ease both;
+    border: none;
+    cursor: pointer;
 }
-.btn-again:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(15,107,92,0.38); }
+.btn-again:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(var(--primary-rgb), 0.38);
+}
 
-/* Confetti dots */
+/* Confetti dots dengan warna palette */
 .dot {
     position: absolute;
     border-radius: 50%;
@@ -195,22 +214,29 @@ h1 {
 
 @push('scripts')
 <script>
-// Confetti sederhana
+// Confetti dengan warna palette baru
 document.addEventListener('DOMContentLoaded', function () {
-    const colors = ['#0f6b5c','#c9932a','#2dd4bf','#f59e0b','#34d399','#fbbf24'];
+    const colors = [
+        'var(--primary)',        // #D70608
+        'var(--primary-dark)',   // #E60102
+        'var(--accent)',         // #DB8138
+        'var(--accent-light)',   // #FDCFB8
+        '#f9a07b',               // warna tambahan yang cocok (oranye muda)
+        '#b3413d'                // merah kecoklatan
+    ];
     const container = document.getElementById('success-page');
     for (let i = 0; i < 24; i++) {
         const dot = document.createElement('div');
         dot.className = 'dot';
         const size = Math.random() * 8 + 4;
         dot.style.cssText = `
-            width:${size}px;height:${size}px;
-            background:${colors[Math.floor(Math.random()*colors.length)]};
-            left:${Math.random()*100}%;
-            top:${Math.random()*-20}%;
+            width:${size}px; height:${size}px;
+            background:${colors[Math.floor(Math.random() * colors.length)]};
+            left:${Math.random() * 100}%;
+            top:${Math.random() * -20}%;
             opacity:0.7;
-            animation-duration:${Math.random()*4+3}s;
-            animation-delay:${Math.random()*2}s;
+            animation-duration:${Math.random() * 4 + 3}s;
+            animation-delay:${Math.random() * 2}s;
         `;
         container.appendChild(dot);
     }
