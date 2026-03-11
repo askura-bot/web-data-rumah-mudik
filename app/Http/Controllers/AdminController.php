@@ -27,7 +27,7 @@ class AdminController extends Controller
 
         if ($request->password === config('app.admin_password', 'admin123')) {
             Session::put('admin_logged_in', true);
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.data');
         }
 
         return back()->withErrors(['password' => 'Password salah.'])->withInput();
@@ -85,7 +85,8 @@ class AdminController extends Controller
         $query = RumahMudik::select(
             'id', 'nik', 'nama_pemilik', 'latitude', 'longitude',
             'alamat_lengkap', 'rt', 'rw', 'kabupaten', 'kecamatan',
-            'tanggal_mulai_mudik', 'tanggal_selesai_mudik'
+            'tanggal_mulai_mudik', 'tanggal_selesai_mudik',
+            'foto_rumah'
         );
 
         $this->applyFilters($query, $request);

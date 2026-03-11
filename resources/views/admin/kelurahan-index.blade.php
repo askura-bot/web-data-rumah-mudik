@@ -162,7 +162,7 @@ tbody tr:hover { background: #f5f7ff; }
             </div>
         </div>
         <div class="t-right">
-            <a href="{{ route('admin.dashboard') }}" class="t-back">
+            <a href="{{ route('admin.data') }}" class="t-back">
                 <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -183,7 +183,7 @@ tbody tr:hover { background: #f5f7ff; }
     <div class="page-hd">
         <div>
             <div class="breadcrumb">
-                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <a href="{{ route('admin.data') }}">Dashboard</a>
                 <span class="breadcrumb-sep">›</span>
                 <a href="{{ route('admin.wilayah.kecamatan') }}">Kecamatan</a>
                 <span class="breadcrumb-sep">›</span>
@@ -228,10 +228,12 @@ tbody tr:hover { background: #f5f7ff; }
                 <div class="add-grid">
                     <div>
                         <label class="fl">Kecamatan <span style="color:#ef4444">*</span></label>
-                        <select name="kecamatan_id" class="fi {{ $errors->has('kecamatan_id') ? 'error' : '' }}" required>
+                        <select name="kecamatan_id" id="select-kecamatan"
+                            class="fi {{ $errors->has('kecamatan_id') ? 'error' : '' }}" required>
                             <option value="">Pilih Kecamatan</option>
                             @foreach($kecamatans as $kec)
-                                <option value="{{ $kec->id }}" {{ old('kecamatan_id') == $kec->id ? 'selected' : '' }}>
+                                <option value="{{ $kec->id }}"
+                                    {{ (old('kecamatan_id', session('last_kecamatan_id')) == $kec->id) ? 'selected' : '' }}>
                                     {{ $kec->nama }}
                                 </option>
                             @endforeach
@@ -242,7 +244,7 @@ tbody tr:hover { background: #f5f7ff; }
                         <label class="fl">Nama Kelurahan / Desa <span style="color:#ef4444">*</span></label>
                         <input type="text" name="nama" value="{{ old('nama') }}"
                             class="fi {{ $errors->has('nama') ? 'error' : '' }}"
-                            placeholder="Nama kelurahan/desa...">
+                            placeholder="Nama kelurahan/desa..." id="input-nama" autofocus>
                         @error('nama')<p class="fi-err">{{ $message }}</p>@enderror
                     </div>
                     <button type="submit" class="btn-add">
@@ -403,6 +405,15 @@ tbody tr:hover { background: #f5f7ff; }
 
 @push('scripts')
 <script>
+// Auto-focus input nama jika kecamatan sudah terpilih saat halaman load
+document.addEventListener('DOMContentLoaded', function () {
+    const kecSelect = document.getElementById('select-kecamatan');
+    const namaInput = document.getElementById('input-nama');
+
+    if (kecSelect && kecSelect.value && namaInput) {
+        namaInput.focus();
+    }
+});
 function startEditKel(id) {
     document.querySelectorAll('.view-kel-' + id).forEach(el => el.style.display = 'none');
     document.getElementById('edit-kel-' + id).classList.add('open');

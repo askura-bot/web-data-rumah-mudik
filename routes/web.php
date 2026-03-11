@@ -19,9 +19,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [AdminController::class, 'login'])->name('login.post');
 
     Route::middleware(\App\Http\Middleware\AdminAuth::class)->group(function () {
-        // Dashboard (redirect ke data)
-        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-
+        
         // Dua halaman utama
         Route::get('/data',  [AdminController::class, 'data'])->name('data');
         Route::get('/peta',  [AdminController::class, 'peta'])->name('peta');

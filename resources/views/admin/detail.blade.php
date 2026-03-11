@@ -275,7 +275,7 @@ html, body {
 {{-- TOPBAR --}}
 <div class="topbar">
     <div class="topbar-in">
-        <a href="{{ route('admin.dashboard') }}" class="btn-back" title="Kembali">
+        <a href="{{ route('admin.data') }}" class="btn-back" title="Kembali">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>

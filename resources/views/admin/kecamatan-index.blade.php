@@ -323,7 +323,7 @@ tbody tr:hover { background: #f5f7ff; }
             </div>
         </div>
         <div class="t-right">
-            <a href="{{ route('admin.dashboard') }}" class="t-back">
+            <a href="{{ route('admin.data') }}" class="t-back">
                 <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
@@ -344,7 +344,7 @@ tbody tr:hover { background: #f5f7ff; }
     <div class="page-hd">
         <div>
             <div class="breadcrumb">
-                <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                <a href="{{ route('admin.data') }}">Dashboard</a>
                 <span class="breadcrumb-sep">›</span>
                 <span>Manajemen Wilayah</span>
                 <span class="breadcrumb-sep">›</span>

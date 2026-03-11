@@ -102,8 +102,9 @@ class WilayahController extends Controller
             ->where('nama', $request->nama)->exists();
 
         if ($exists) {
-            return back()->with('error', 'Kelurahan dengan nama tersebut sudah ada di kecamatan ini.')
-                         ->withInput();
+            return back()
+                ->with('error', 'Kelurahan dengan nama tersebut sudah ada di kecamatan ini.')
+                ->withInput(); // withInput sudah membawa kecamatan_id otomatis
         }
 
         Kelurahan::create([
@@ -111,7 +112,10 @@ class WilayahController extends Controller
             'nama'         => $request->nama,
         ]);
 
-        return back()->with('success', 'Kelurahan berhasil ditambahkan.');
+        // Flash kecamatan_id ke session agar dropdown tidak reset setelah sukses
+        return back()
+            ->with('success', 'Kelurahan berhasil ditambahkan.')
+            ->with('last_kecamatan_id', $request->kecamatan_id);
     }
 
     public function kelurahanUpdate(Request $request, Kelurahan $kelurahan)

@@ -5,6 +5,21 @@
 @push('styles')
 @include('components.admin-shared-styles')
 <style>
+/* Hapus padding default popup Leaflet */
+.popup-clean .leaflet-popup-content-wrapper {
+    padding: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0,0,0,.18);
+}
+.popup-clean .leaflet-popup-content {
+    margin: 0;
+    width: 240px !important;
+}
+.popup-clean .leaflet-popup-tip-container {
+    margin-top: -1px;
+}
+
 #admin-map {
     height: calc(100vh - 52px - 2rem - 56px - 74px - 1rem);
     min-height: 360px;
@@ -41,6 +56,8 @@
 
 <div class="wrap">
 
+    @include('components.stats-cards-admin-dasboard')
+
     {{-- ── Filter ── --}}
     <div class="panel">
         <div class="ph">
@@ -76,7 +93,7 @@
 
                     {{-- RT & RW --}}
                     <div>
-                        <span class="fi-group-label">RT &amp; RW</span>
+                        <span class="fi-group-label">RT &amp; <p class="fi-hint">004 / 04 / 4 dianggap sama</p> </span>
                         <div class="fi-rt-rw">
                             <input type="text" name="rt" id="f-rt" value="{{ request('rt') }}"
                                 class="fi" placeholder="RT" inputmode="numeric"
@@ -85,7 +102,6 @@
                                 class="fi" placeholder="RW" inputmode="numeric"
                                 oninput="this.value=this.value.replace(/\D/g,'')">
                         </div>
-                        <p class="fi-hint">004 / 04 / 4 dianggap sama</p>
                     </div>
 
                     <div class="fa">
@@ -115,7 +131,10 @@
         <div id="admin-map"></div>
         <div class="map-legend">
             <div class="legend-item">
-                <div class="legend-dot blue"></div>
+                <svg width="15" height="25" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 0C6.268 0 0 6.268 0 14C0 24.5 14 36 14 36C14 36 28 24.5 28 14C28 6.268 21.732 0 14 0Z" fill="#1a3a6b" stroke="#f5a623" stroke-width="2"/>
+                    <circle cx="14" cy="14" r="5" fill="white" opacity="0.9"/>
+                </svg>
                 Rumah terdaftar
             </div>
             <div class="legend-item" style="margin-left:auto">
@@ -140,6 +159,13 @@ document.addEventListener('click', function () {
     document.getElementById('wilayah-menu')?.classList.remove('open');
 });
 
+// Format "2025-03-28T00:00:00" → "28 Mar 2025"
+function formatTanggal(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
 // ── Peta ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
     const map = L.map('admin-map').setView([-7.1751, 110.4028], 11);
@@ -148,10 +174,28 @@ document.addEventListener('DOMContentLoaded', function () {
         attribution: '© OpenStreetMap contributors', maxZoom: 19
     }).addTo(map);
 
-    const icon = L.divIcon({
-        html: '<div style="width:11px;height:11px;background:#1a3a6b;border-radius:50%;border:2.5px solid #f5a623;box-shadow:0 2px 5px rgba(0,0,0,.4)"></div>',
-        iconSize: [11, 11], iconAnchor: [5, 5], className: ''
-    });
+    // Hapus const icon = L.divIcon(...) yang lama, ganti dengan:
+    let _pinId = 0;
+    function makeIcon() {
+        const id = 'pg' + (++_pinId);
+        return L.divIcon({
+            html: `<svg width="28" height="36" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#1e4a8a"/>
+                        <stop offset="100%" stop-color="#0a1628"/>
+                    </linearGradient>
+                </defs>
+                <path d="M14 0C6.268 0 0 6.268 0 14C0 24.5 14 36 14 36C14 36 28 24.5 28 14C28 6.268 21.732 0 14 0Z"
+                    fill="url(#${id})" stroke="#f5a623" stroke-width="2"/>
+                <circle cx="14" cy="14" r="5" fill="white" opacity="0.9"/>
+            </svg>`,
+            iconSize:   [28, 36],
+            iconAnchor: [14, 36],
+            popupAnchor:[0, -38],
+            className:  ''
+        });
+    }
 
     let layerGroup = L.layerGroup().addTo(map);
 
@@ -184,22 +228,98 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const bounds = [];
                 data.forEach(r => {
-                    L.marker([r.latitude, r.longitude], { icon })
+                    L.marker([r.latitude, r.longitude], { icon: makeIcon() })
                         .bindPopup(`
-                            <div style="font-family:'Plus Jakarta Sans',sans-serif;min-width:200px;font-size:12px;line-height:1.6">
-                                <p style="font-weight:700;color:#0a1628;margin-bottom:5px;font-size:13px">${r.nama_pemilik}</p>
-                                <p style="color:#64748b;margin-bottom:2px">NIK: <b style="color:#374151">${r.nik}</b></p>
-                                <p style="color:#64748b;margin-bottom:2px">
-                                    Kec. <b style="color:#1e4a8a">${r.kecamatan}</b>
-                                    · RT <b>${r.rt}</b>/RW <b>${r.rw}</b>
-                                </p>
-                                <p style="color:#64748b;font-size:11px;margin-bottom:4px">${r.alamat_lengkap ?? ''}</p>
-                                <div style="margin-top:6px;padding-top:6px;border-top:1px solid #e2e6ee">
-                                    <p style="font-weight:600;color:#1a3a6b;font-size:11px">
-                                        ${r.tanggal_mulai_mudik} s/d ${r.tanggal_selesai_mudik}
+                            <div style="font-family:'Plus Jakarta Sans',sans-serif;width:240px;font-size:12px;line-height:1.5;overflow:hidden">
+
+                                {{-- Foto rumah --}}
+                                ${r.foto_rumah
+                                    ? `<div style="margin:-1px -1px 10px -1px;height:110px;overflow:hidden;border-radius:4px 4px 0 0">
+                                        <img src="/storage/${r.foto_rumah}"
+                                            style="width:100%;height:100%;object-fit:cover;display:block">
+                                    </div>`
+                                    : `<div style="margin:-1px -1px 10px -1px;height:80px;background:linear-gradient(135deg,#e8edf5,#f0f4ff);display:flex;align-items:center;justify-content:center;border-radius:4px 4px 0 0">
+                                        <svg width="32" height="32" fill="none" stroke="#94a3b8" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                    </div>`
+                                }
+
+                                {{-- Nama --}}
+                                <div style="padding:0 12px">
+                                    <p style="font-weight:800;color:#0a1628;font-size:13px;margin-bottom:8px;line-height:1.3">
+                                        ${r.nama_pemilik}
                                     </p>
+
+                                    {{-- NIK --}}
+                                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                                        <svg width="11" height="11" fill="none" stroke="#94a3b8" viewBox="0 0 24 24" style="flex-shrink:0">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0"/>
+                                        </svg>
+                                        <span style="color:#64748b">NIK: </span>
+                                        <span style="font-family:monospace;font-weight:600;color:#374151;font-size:11px">${r.nik}</span>
+                                    </div>
+
+                                    {{-- Kecamatan + RT/RW --}}
+                                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                                        <svg width="11" height="11" fill="none" stroke="#94a3b8" viewBox="0 0 24 24" style="flex-shrink:0">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                        <span style="color:#1e4a8a;font-weight:600">${r.kecamatan}</span>
+                                        <span style="color:#cbd5e1">·</span>
+                                        <span style="color:#64748b">RT <b style="color:#374151">${r.rt}</b> / RW <b style="color:#374151">${r.rw}</b></span>
+                                    </div>
+
+                                    {{-- Alamat --}}
+                                    <div style="display:flex;gap:6px;margin-bottom:8px">
+                                        <svg width="11" height="11" fill="none" stroke="#94a3b8" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                                        </svg>
+                                        <span style="color:#64748b;font-size:11px;line-height:1.4">${r.alamat_lengkap ?? '—'}</span>
+                                    </div>
+
+                                    {{-- Jadwal mudik --}}
+                                    <div style="background:#f0f4ff;border-radius:7px;padding:6px 9px;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+                                        <svg width="11" height="11" fill="none" stroke="#1e4a8a" viewBox="0 0 24 24" style="flex-shrink:0">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span style="font-size:11px;font-weight:600;color:#1e4a8a">
+                                            ${formatTanggal(r.tanggal_mulai_mudik)}
+                                            <span style="font-weight:400;color:#64748b">s/d</span>
+                                            ${formatTanggal(r.tanggal_selesai_mudik)}
+                                        </span>
+                                    </div>
+
+                                    {{-- Tombol detail --}}
+                                    <a href="/admin/rumah/${r.id}"
+                                        style="display:flex;align-items:center;justify-content:center;gap:5px;
+                                            width:100%;padding:7px;margin-bottom:10px;
+                                            background:#0a1628;color:#fff;
+                                            font-size:11px;font-weight:700;
+                                            border-radius:8px;text-decoration:none;
+                                            transition:background .2s"
+                                        onmouseover="this.style.background='#1a3a6b'"
+                                        onmouseout="this.style.background='#0a1628'">
+                                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        Lihat Detail Rumah
+                                    </a>
                                 </div>
-                            </div>`)
+                            </div>`, {
+                                maxWidth: 260,
+                                padding: 0,       // hilangkan padding default Leaflet
+                                className: 'popup-clean'
+                            })
                         .addTo(layerGroup);
                     bounds.push([r.latitude, r.longitude]);
                 });
