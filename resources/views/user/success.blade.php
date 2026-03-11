@@ -1,3 +1,4 @@
+{{-- Views/user/succes.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Pendaftaran Berhasil')
 

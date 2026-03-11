@@ -1,3 +1,4 @@
+{{-- Views/user/form.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Daftar Rumah Mudik — Kabupaten Semarang')
 
@@ -495,10 +496,11 @@ select.field-input {
                 <div class="step-num">3</div>
                 <div>
                     <div class="step-title">Wilayah</div>
-                    <div class="step-subtitle">RT, RW, dan kecamatan</div>
+                    <div class="step-subtitle">RT, RW, kecamatan, dan kelurahan</div>
                 </div>
             </div>
 
+            {{-- RT / RW --}}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
                 <div>
                     <label class="field-label">RT <span class="req">*</span></label>
@@ -516,29 +518,65 @@ select.field-input {
                 </div>
             </div>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-                <div>
-                    <label class="field-label">Kabupaten / Kota</label>
-                    <div class="locked-field">
-                        <svg class="lock-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                        </svg>
-                        Kab. Semarang
-                    </div>
-                    <input type="hidden" name="kabupaten" value="Kabupaten Semarang">
+            {{-- Kabupaten (locked) --}}
+            <div style="margin-bottom:1rem">
+                <label class="field-label">Kabupaten / Kota</label>
+                <div class="locked-field">
+                    <svg class="lock-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    Kab. Semarang
                 </div>
+                <input type="hidden" name="kabupaten" value="Kabupaten Semarang">
+            </div>
+
+            {{-- Kecamatan + Kelurahan --}}
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+
+                {{-- Kecamatan --}}
                 <div>
                     <label class="field-label">Kecamatan <span class="req">*</span></label>
-                    <select name="kecamatan" class="field-input @error('kecamatan') error @enderror" required>
+                    <select name="kecamatan_id" id="kecamatan_select"
+                        class="field-input @error('kecamatan_id') error @enderror" required>
                         <option value="">Pilih Kecamatan</option>
                         @foreach($kecamatans as $kec)
-                            <option value="{{ $kec->nama }}" {{ old('kecamatan') == $kec->nama ? 'selected' : '' }}>
+                            <option value="{{ $kec->id }}"
+                                {{ old('kecamatan_id') == $kec->id ? 'selected' : '' }}>
                                 {{ $kec->nama }}
                             </option>
                         @endforeach
                     </select>
-                    @error('kecamatan')<p class="field-error">{{ $message }}</p>@enderror
+                    @error('kecamatan_id')<p class="field-error">{{ $message }}</p>@enderror
                 </div>
+
+                {{-- Kelurahan — diisi via AJAX --}}
+                <div>
+                    <label class="field-label">Kelurahan / Desa <span class="req">*</span></label>
+                    <div style="position:relative">
+                        <select name="kelurahan_id" id="kelurahan_select"
+                            class="field-input @error('kelurahan_id') error @enderror"
+                            disabled required>
+                            <option value="">— Pilih kecamatan dulu —</option>
+                            {{-- Jika ada old value (setelah validation error), opsi akan diisi JS --}}
+                        </select>
+                        {{-- Spinner saat loading --}}
+                        <div id="kel_spinner" style="
+                            display:none;
+                            position:absolute;
+                            right:36px; top:50%;
+                            transform:translateY(-50%);
+                            gap:3px;
+                            align-items:center;
+                        ">
+                            <span class="spinner-dot"></span>
+                            <span class="spinner-dot"></span>
+                            <span class="spinner-dot"></span>
+                        </div>
+                    </div>
+                    @error('kelurahan_id')<p class="field-error">{{ $message }}</p>@enderror
+                </div>
+
             </div>
         </div>
 
@@ -731,6 +769,63 @@ if (navigator.geolocation) {
 } else {
     initMap(...defaultCenter);
 }
+
+(function () {
+    const kecSelect = document.getElementById('kecamatan_select');
+    const kelSelect = document.getElementById('kelurahan_select');
+    const spinner   = document.getElementById('kel_spinner');
+
+    // old value dari Laravel (setelah redirect with errors)
+    const oldKelId  = {{ old('kelurahan_id') ? old('kelurahan_id') : 'null' }};
+
+    async function loadKelurahans(kecamatanId) {
+        // Reset
+        kelSelect.innerHTML  = '<option value="">Memuat...</option>';
+        kelSelect.disabled   = true;
+        spinner.style.display = 'flex';
+
+        try {
+            const resp = await fetch(`{{ route('api.kelurahans') }}?kecamatan_id=${kecamatanId}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+
+            if (!resp.ok) throw new Error('Gagal memuat data kelurahan.');
+
+            const data = await resp.json();
+
+            kelSelect.innerHTML = '<option value="">Pilih Kelurahan / Desa</option>';
+
+            data.forEach(kel => {
+                const opt    = document.createElement('option');
+                opt.value    = kel.id;
+                opt.textContent = kel.nama;
+                if (oldKelId && kel.id == oldKelId) opt.selected = true;
+                kelSelect.appendChild(opt);
+            });
+
+            kelSelect.disabled = false;
+
+        } catch (err) {
+            kelSelect.innerHTML = '<option value="">Gagal memuat — coba lagi</option>';
+            console.error(err);
+        } finally {
+            spinner.style.display = 'none';
+        }
+    }
+
+    kecSelect.addEventListener('change', function () {
+        if (!this.value) {
+            kelSelect.innerHTML  = '<option value="">— Pilih kecamatan dulu —</option>';
+            kelSelect.disabled   = true;
+            return;
+        }
+        loadKelurahans(this.value);
+    });
+
+    // Jika ada old kecamatan_id (redirect setelah error validasi), auto-load kelurahan
+    const oldKecId = kecSelect.value;
+    if (oldKecId) loadKelurahans(oldKecId);
+}());
 
 // ─── Kompresi & Preview Foto (Canvas API) ─────────────────────────────────────
 const MAX_WIDTH    = 1280;   // px — lebar maksimum output

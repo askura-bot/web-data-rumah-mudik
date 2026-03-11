@@ -1,3 +1,4 @@
+{{-- Views/layouts/app.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -10,6 +11,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Leaflet CSS sudah di-bundle via app.js (NPM) --}}
+    {{-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/> --}}
 
     {{-- Google Fonts --}}
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,6 +28,7 @@
     @yield('content')
 
     {{-- Leaflet JS sudah di-bundle via app.js (NPM) --}}
+    {{-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> --}}
 
     @stack('scripts')
 </body>

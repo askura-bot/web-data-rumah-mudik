@@ -1,5 +1,5 @@
 <?php
-
+// Models/RumahMudik.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +18,7 @@ class RumahMudik extends Model
         'rw',
         'kabupaten',
         'kecamatan',
+        'kelurahan',          // ← tambahan
         'tanggal_mulai_mudik',
         'tanggal_selesai_mudik',
         'foto_rumah',

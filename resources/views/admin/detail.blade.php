@@ -1,3 +1,4 @@
+{{-- Views/admin/detail --}}
 @extends('layouts.AdminLayout')
 @section('title', 'Detail — ' . $rumah->nama_pemilik)
 

@@ -1,8 +1,7 @@
 <?php
-
+// app/Http/Controllers/AdminController.php
 namespace App\Http\Controllers;
 
-use App\Models\Kabupaten;
 use App\Models\Kecamatan;
 use App\Models\RumahMudik;
 use Illuminate\Http\Request;
@@ -40,38 +39,46 @@ class AdminController extends Controller
         return redirect()->route('admin.login');
     }
 
-    // ─── Dashboard ──────────────────────────────────────────────────────────
+    // ─── Dashboard (redirect ke data) ───────────────────────────────────────
 
     public function dashboard(Request $request)
     {
+        return redirect()->route('admin.data');
+    }
+
+    // ─── Halaman Data Rumah ──────────────────────────────────────────────────
+
+    public function data(Request $request)
+    {
         $query = RumahMudik::query();
 
-        if ($request->filled('kecamatan')) {
-            $query->where('kecamatan', $request->kecamatan);
-        }
-        if ($request->filled('nik')) {
-            $query->where('nik', 'like', '%' . $request->nik . '%');
-        }
+        $this->applyFilters($query, $request);
 
-        // Urutkan: terbaru (default) atau terlama
         $sort = $request->input('sort', 'terbaru');
         $query->orderBy('created_at', $sort === 'terlama' ? 'asc' : 'desc');
 
         $rumahList  = $query->paginate(15)->withQueryString();
+        $kecamatans = $this->getKecamatans();
 
-        $kecamatans = Kecamatan::whereHas('kabupaten', function ($q) {
-            $q->where('nama', self::KABUPATEN);
-        })->orderBy('nama')->get();
-
-        return view('admin.dashboard', compact('rumahList', 'kecamatans', 'sort'));
+        return view('admin.data', compact('rumahList', 'kecamatans', 'sort'));
     }
+
+    // ─── Halaman Peta ────────────────────────────────────────────────────────
+
+    public function peta(Request $request)
+    {
+        $kecamatans = $this->getKecamatans();
+        return view('admin.peta', compact('kecamatans'));
+    }
+
+    // ─── Detail ─────────────────────────────────────────────────────────────
 
     public function show(RumahMudik $rumah)
     {
         return view('admin.detail', compact('rumah'));
     }
 
-    // ─── API: semua titik untuk peta ────────────────────────────────────────
+    // ─── API: titik peta (dipakai halaman peta & data) ──────────────────────
 
     public function mapData(Request $request)
     {
@@ -81,13 +88,49 @@ class AdminController extends Controller
             'tanggal_mulai_mudik', 'tanggal_selesai_mudik'
         );
 
+        $this->applyFilters($query, $request);
+
+        return response()->json($query->get());
+    }
+
+    // ─── Helper: terapkan filter ke query ───────────────────────────────────
+
+    private function applyFilters($query, Request $request): void
+    {
         if ($request->filled('kecamatan')) {
             $query->where('kecamatan', $request->kecamatan);
         }
+
         if ($request->filled('nik')) {
             $query->where('nik', 'like', '%' . $request->nik . '%');
         }
 
-        return response()->json($query->get());
+        // RT: normalisasi — buang leading zeros, lalu cocokkan angka intinya
+        // Contoh: input "004" → cari angka 4
+        // Cocok dengan "4", "04", "004", "0004" di database
+        if ($request->filled('rt')) {
+            $rtNorm = ltrim($request->rt, '0') ?: '0';
+            $query->whereRaw(
+                "CAST(rt AS INTEGER) = ?",
+                [(int) $rtNorm]
+            );
+        }
+
+        if ($request->filled('rw')) {
+            $rwNorm = ltrim($request->rw, '0') ?: '0';
+            $query->whereRaw(
+                "CAST(rw AS INTEGER) = ?",
+                [(int) $rwNorm]
+            );
+        }
+    }
+
+    // ─── Helper: ambil kecamatan ─────────────────────────────────────────────
+
+    private function getKecamatans()
+    {
+        return Kecamatan::whereHas('kabupaten', function ($q) {
+            $q->where('nama', self::KABUPATEN);
+        })->orderBy('nama')->get();
     }
 }
