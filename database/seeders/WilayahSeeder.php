@@ -18,80 +18,69 @@ class WilayahSeeder extends Seeder
         // Data kelurahan/desa per kecamatan — Kabupaten Semarang
         $wilayah = [
             'Tugu' => [
-                'Karangayar', 'Randugarut'
+                'Karanganyar', 'Randugarut','Mangkang Wetan', 'Tugurejo', 'Mangkang Kulon','Jerakah','Mangunharjo'
             ],
-            'Ungaran Barat' => [
-                'Ungaran', 'Lerep', 'Candirejo', 'Nyatnyono', 'Genuk',
-                'Gogik', 'Kalisidi', 'Branjang',
+
+            'Tembalang'=> [
+                'Tembalang','Tandang','Kramas','Meteseh','Sambiroto','Sendangmulyo','Mangunharjo','Sendangguwo','Bulusan','Kedungmudu','Rowosari','Jangli',
             ],
-            'Ungaran Timur' => [
-                'Gedanganak', 'Beji', 'Leyangan', 'Sidomulyo', 'Kalirejo',
-                'Kalongan', 'Susukan',
+
+            'Semarang Utara' => [
+                'Bandarharjo','Dadapsari','Panggung Kidul','Plombokan','Bulu Lor','Kuningan','Panggung Lor','Tanjung Mas','Purwosari',
             ],
-            'Bergas' => [
-                'Bergas Lor', 'Bergas Kidul', 'Randugunting', 'Diwak',
-                'Gebugan', 'Pagersari', 'Wringinputih', 'Ngempon',
-                'Munding', 'Gondoriyo',
+
+            'Semarang Timur' => [
+                'Kebonagung','Karang Tempel','Kemijen','Mlatibaru','Rejomulyo','Sarirejo','Bugangan','Mlatiharjo','Rejosari','Karangturi',
             ],
-            'Pringapus' => [
-                'Pringapus', 'Klepu', 'Wonoyoso', 'Candirejo', 'Pringsari',
-                'Jatirunggo', 'Penawangan', 'Bumirejo',
+            
+            'Semarang Tengah' => [
+                'Kembangsari','Bangunharjo','Brumbungan','Kauman','Pekunden','Purwodinatan','Karangkidul','Sekayu','Miroto','Pandansari','Jagalan','Gabahan','Kranggan','Pindrikan Kidul','Pindrikan Lor', 
             ],
-            'Bawen' => [
-                'Bawen', 'Harjosari', 'Lemahireng', 'Asinan', 'Polosiri',
-                'Poncoruso', 'Kandangan', 'Doplang',
+
+            'Semarang Selatan' => [
+                'Lamper Lor','Barusari','Bulustalan','Mugassari','Wonodri','Pleburan','Randusari','Lamper Tengah','Peterongan','Lamper Kidul', 
             ],
-            'Ambarawa' => [
-                'Ambarawa', 'Lodoyong', 'Kupang', 'Panjang', 'Pojoksari',
-                'Tambakboyo', 'Ngampin', 'Kranggan', 'Bejalen', 'Bandungan',
+            
+            'Semarang Barat' => [
+                'Krobokan','Kembangarum','Kalibanteng Kidul','Manyaran','Tambakharjo','Kalibanteng Kulon','Tawangmas','Karangayu','Krapyak','Tawangsari','Bongsari','Ngemplak Simongan','Salamanmloyo','Cabean','Gisikdrono','Bojongsalaman'
             ],
-            'Bandungan' => [
-                'Bandungan', 'Sidomukti', 'Pakopen', 'Kenteng', 'Jetis',
-                'Duren', 'Banyukuning', 'Mlilir',
+            
+            'Pedurungan' => [
+                'Plamomgsari','Pedurungan Lor','Pedurungan Kidul','Tlogosari Kidul','Kalicari','Penggaron Kidul','Pedurungan Tengah','Muktiharjo Kidul','Palebon','Tlogosari Wetan','Gemah','Tlogomulyo',
+            ],            
+            
+            'Ngaliyan' => [
+                'Kalipancur','Purwoyoso','Bringin','Bambankerep','Gondoriyo','Tambakaji','Ngaliyan','Wates','Podorejo','Wonosari',
             ],
-            'Sumowono' => [
-                'Sumowono', 'Lanjan', 'Candigaron', 'Kemitir', 'Ngadikerso',
-                'Trayu', 'Duren', 'Jubelan', 'Bumen', 'Mendongan',
-                'Pledokan', 'Piyanggang',
+
+            'Mijen' => [
+                'Kedungpane','Karangmalang','Wonolopo','Jatisari','Pesantren','Tambangan','Bubakan','Mijen','Polaman','Jatibarang','Cangkiran','Ngadirgo','Wonoplumbon','Purwosari',
             ],
-            'Jambu' => [
-                'Jambu', 'Genting', 'Kebondalem', 'Kelurahan', 'Bedono',
-                'Rejosari', 'Kuwarasan', 'Gondoriyo', 'Brongkol',
+                
+            'Gunungpati' => [
+                'Pakintelan','Pongangan','Mangunsari','Sekaran','Sumurejo','Nongkosawit','Ngijo','Sukorejo','Patemon','Gunungpati','Cepoko','Plalangan','Kandri','Sadeng','Kalisegoro','Jatirejo',
+            ],            
+            
+            'Genuk' => [
+                'Karangroto','Gebangsari','Sembungharjo','Terboyo Kulon','Trimulyo','Genuksari','Muktiharjo Lor','Terboyo Wetan','Kudu','Banjardowo','Penggaron Lor','Bangetayu Wetan','Bangetayu Kulon',
             ],
-            'Banyubiru' => [
-                'Banyubiru', 'Kebondowo', 'Kemambang', 'Tegaron',
-                'Rowoboni', 'Wirogomo', 'Sepakung', 'Gedong',
+
+            'Gayamsari' => [
+                'Tambakrejo','Kaligawe','Sawah Besar','Siwalan','Sambirejo','Pandean Lamper','Gayamsari',
             ],
-            'Tuntang' => [
-                'Tuntang', 'Kesongo', 'Candirejo', 'Sraten', 'Watuagung',
-                'Karangtengah', 'Jombor', 'Gading', 'Semowo', 'Ngempon',
-                'Rowosari', 'Polobogo',
+                
+            'Gajahmungkur' => [
+                'Bendungan','Karangrejo','Lempongsari','Sampangan','Gajahmungkur','Petompon','Bendan Ngisor','Bendan Duwur',
             ],
-            'Getasan' => [
-                'Getasan', 'Manggihan', 'Polobogo', 'Wates', 'Kopeng',
-                'Batur', 'Tolokan', 'Jetak', 'Sumogawe', 'Tajuk',
-                'Nogosaren', 'Samirono', 'Ngrawan',
+
+            'Candisari' => [
+                'Karanganyar Gunung','Tegalsari','Candi','Kaliwiru','Wonotingal','Jomblang','Jatingaleh'
             ],
-            'Tengaran' => [
-                'Tengaran', 'Sruwen', 'Karangduren', 'Cukil', 'Duren',
-                'Barukan', 'Butuh', 'Klero', 'Regunung', 'Patemon',
-                'Tegalwaton', 'Nyamat',
+
+            'Banyumanik' => [
+                'Banyumanik','Pudak Payung','Pedalangan','Srondol Kulon','Gedawangan','Srondol Wetan','Sumurbroto','Padangsari','Ngesrep','Tinjomoyo','Jabungan',
             ],
-            'Susukan' => [
-                'Susukan', 'Timpik', 'Muncar', 'Bakalrejo', 'Koripan',
-                'Ketapang', 'Gentan', 'Badran', 'Kemetul',
-            ],
-            'Suruh' => [
-                'Suruh', 'Plumbon', 'Cukilan', 'Dadapayam', 'Kebowan',
-                'Jatirejo', 'Krandon Lor', 'Medayu', 'Congol', 'Tegalwaton',
-                'Gunung Tumpeng', 'Bonomerto', 'Purworejo', 'Reksosari',
-                'Dersansari', 'Ngrawan',
-            ],
-            'Pabelan' => [
-                'Pabelan', 'Semowo', 'Segiri', 'Kauman Lor', 'Kadirejo',
-                'Padaan', 'Tukang', 'Giling', 'Bendungan', 'Terban',
-                'Glawan',
-            ],
+
         ];
 
         foreach ($wilayah as $namaKec => $kelurahans) {

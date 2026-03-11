@@ -91,6 +91,17 @@
                         </select>
                     </div>
 
+                    {{-- Kelurahan (dinamis) --}}
+                    <div>
+                        <label class="fl">Kelurahan / Desa</label>
+                        <select name="kelurahan" id="f-kelurahan" class="fi">
+                            <option value="">Semua Kelurahan</option>
+                            @if(request('kelurahan'))
+                                <option value="{{ request('kelurahan') }}" selected>{{ request('kelurahan') }}</option>
+                            @endif
+                        </select>
+                    </div>
+
                     {{-- RT & RW --}}
                     <div>
                         <span class="fi-group-label">RT &amp; <p class="fi-hint">004 / 04 / 4 dianggap sama</p> </span>
@@ -148,6 +159,56 @@
 
 @push('scripts')
 <script>
+// Fungsi untuk memuat kelurahan berdasarkan kecamatan
+function fetchKelurahan(kecamatanNama) {
+    const kelurahanSelect = document.getElementById('f-kelurahan');
+    
+    // Reset dropdown
+    kelurahanSelect.innerHTML = '<option value="">Semua Kelurahan</option>';
+    
+    if (!kecamatanNama) {
+        return;
+    }
+
+    kelurahanSelect.disabled = true;
+
+    fetch(`{{ route('admin.api.kelurahans') }}?kecamatan=${encodeURIComponent(kecamatanNama)}`)
+        .then(response => response.json())
+        .then(data => {
+            kelurahanSelect.disabled = false;
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.nama;
+                option.textContent = item.nama;
+                kelurahanSelect.appendChild(option);
+            });
+
+            // Set nilai selected jika ada parameter kelurahan di URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedKel = urlParams.get('kelurahan');
+            if (selectedKel) {
+                kelurahanSelect.value = selectedKel;
+            }
+        })
+        .catch(error => {
+            console.error('Gagal memuat kelurahan:', error);
+            kelurahanSelect.disabled = false;
+        });
+}
+
+// Event listener untuk perubahan kecamatan
+document.getElementById('f-kecamatan').addEventListener('change', function() {
+    fetchKelurahan(this.value);
+});
+
+// Saat halaman dimuat, jika sudah ada kecamatan terpilih, muat kelurahan
+document.addEventListener('DOMContentLoaded', function() {
+    const kecamatanSelect = document.getElementById('f-kecamatan');
+    if (kecamatanSelect.value) {
+        fetchKelurahan(kecamatanSelect.value);
+    }
+});
+
 // ── Dropdown ──────────────────────────────────────────────────────────────────
 function toggleDropdown(e) {
     e.stopPropagation();
@@ -200,17 +261,19 @@ document.addEventListener('DOMContentLoaded', function () {
     let layerGroup = L.layerGroup().addTo(map);
 
     function buildParams() {
-        const p = new URLSearchParams();
-        const nik = document.getElementById('f-nik').value.trim();
-        const kec = document.getElementById('f-kecamatan').value;
-        const rt  = document.getElementById('f-rt').value.trim();
-        const rw  = document.getElementById('f-rw').value.trim();
-        if (nik) p.set('nik', nik);
-        if (kec) p.set('kecamatan', kec);
-        if (rt)  p.set('rt', rt);
-        if (rw)  p.set('rw', rw);
-        return p;
-    }
+    const p = new URLSearchParams();
+    const nik = document.getElementById('f-nik').value.trim();
+    const kec = document.getElementById('f-kecamatan').value;
+    const kel = document.getElementById('f-kelurahan').value; // tambahan
+    const rt  = document.getElementById('f-rt').value.trim();
+    const rw  = document.getElementById('f-rw').value.trim();
+    if (nik) p.set('nik', nik);
+    if (kec) p.set('kecamatan', kec);
+    if (kel) p.set('kelurahan', kel); // tambahan
+    if (rt)  p.set('rt', rt);
+    if (rw)  p.set('rw', rw);
+    return p;
+}
 
     function loadMarkers() {
         document.getElementById('map-counter').textContent = 'Memuat...';
@@ -341,11 +404,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Expose ke tombol form
     window.applyFilter = function () { loadMarkers(); };
     window.resetFilter = function () {
-        document.getElementById('f-nik').value = '';
-        document.getElementById('f-kecamatan').value = '';
-        document.getElementById('f-rt').value = '';
-        document.getElementById('f-rw').value = '';
-        loadMarkers();
+    document.getElementById('f-nik').value = '';
+    document.getElementById('f-kecamatan').value = '';
+    document.getElementById('f-kelurahan').innerHTML = '<option value="">Semua Kelurahan</option>'; // reset dropdown
+    document.getElementById('f-rt').value = '';
+    document.getElementById('f-rw').value = '';
+    loadMarkers();
     };
 });
 </script>

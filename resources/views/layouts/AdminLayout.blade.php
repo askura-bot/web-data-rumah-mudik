@@ -1,4 +1,4 @@
-{{-- Views/layouts/AdminLayout.blade.php --}}
+{{-- resources/Views/layouts/AdminLayout.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>

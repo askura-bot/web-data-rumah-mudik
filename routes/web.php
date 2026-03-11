@@ -30,6 +30,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // API peta
         Route::get('/api/map-data',  [AdminController::class, 'mapData'])->name('map-data');
+        Route::get('/api/kelurahans', [AdminController::class, 'getKelurahans'])->name('api.kelurahans');
 
         // ── Wilayah CRUD ──────────────────────────────────────────────────────
         Route::get('/wilayah/kecamatan',                [WilayahController::class, 'kecamatanIndex'])->name('wilayah.kecamatan');

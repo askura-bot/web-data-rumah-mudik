@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kecamatan;
+use App\Models\Kelurahan;
 use App\Models\RumahMudik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -102,6 +103,10 @@ class AdminController extends Controller
             $query->where('kecamatan', $request->kecamatan);
         }
 
+        if ($request->filled('kelurahan')) {
+        $query->where('kelurahan', $request->kelurahan);
+}
+
         if ($request->filled('nik')) {
             $query->where('nik', 'like', '%' . $request->nik . '%');
         }
@@ -133,5 +138,29 @@ class AdminController extends Controller
         return Kecamatan::whereHas('kabupaten', function ($q) {
             $q->where('nama', self::KABUPATEN);
         })->orderBy('nama')->get();
+    }
+
+    public function getKelurahans(Request $request)
+    {
+    $request->validate([
+        'kecamatan' => 'required|string'
+    ]);
+
+    // Cari kecamatan berdasarkan nama (pastikan dalam lingkup Kabupaten Semarang)
+    $kecamatan = Kecamatan::where('nama', $request->kecamatan)
+        ->whereHas('kabupaten', function ($q) {
+            $q->where('nama', self::KABUPATEN);
+        })
+        ->first();
+
+    if (!$kecamatan) {
+        return response()->json([]);
+    }
+
+    $kelurahans = Kelurahan::where('kecamatan_id', $kecamatan->id)
+        ->orderBy('nama')
+        ->get(['nama']); // kita hanya butuh nama, karena filter menggunakan string
+
+    return response()->json($kelurahans);
     }
 }

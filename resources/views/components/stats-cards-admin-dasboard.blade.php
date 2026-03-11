@@ -1,4 +1,4 @@
-{{-- ── Stat Cards ── --}}
+{{-- Resources/Views/components/stats-cards-admin-dashboard.blade.php --}}
     @php
         $today   = \Carbon\Carbon::today();
         $total   = \App\Models\RumahMudik::count();

@@ -8,28 +8,28 @@
 /* ── Table ── */
 .sort-tgl { display: inline-flex; align-items: center; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surf); flex-shrink: 0; }
 .srt { padding: 5px 10px; font-size: .7rem; font-weight: 600; color: var(--muted); background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all .15s; white-space: nowrap; text-decoration: none; font-family: 'Plus Jakarta Sans', sans-serif; }
-.srt:hover { background: #eaecf5; color: var(--text); }
+.srt:hover { background: rgba(255,224,2,0.1); color: var(--text); }
 .srt.on { background: var(--navy); color: #fff; }
 .srt-sep { width: 1px; background: var(--border); align-self: stretch; }
 .tbl-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-hint { display: none; padding: 6px 1rem; font-size: .67rem; color: var(--muted); background: #fffbf2; border-bottom: 1px solid #f5e8cc; gap: 5px; align-items: center; }
 @media (max-width: 767px) { .tbl-hint { display: flex; } }
 table { width: 100%; min-width: 740px; border-collapse: collapse; }
-thead tr { background: linear-gradient(135deg, #f0f4ff, #f8f9fb); }
+thead tr { background: linear-gradient(135deg, #fafafa, #f5f5f5); }
 th { padding: 9px 12px; text-align: left; font-size: .65rem; font-weight: 700; color: var(--muted); letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; border-bottom: 1.5px solid var(--border); }
 td { padding: 10px 12px; border-bottom: 1px solid #f0f2f6; vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
 tbody tr { transition: background .12s; }
-tbody tr:hover { background: #f5f7ff; }
-.nik    { font-family: monospace; font-size: .77rem; color: #374151; }
+tbody tr:hover { background: rgba(255,182,6,0.05); }
+.nik    { font-family: monospace; font-size: .77rem; color: var(--text); }
 .nama   { font-weight: 600; font-size: .82rem; color: var(--text); }
-.kec-b  { display: inline-block; padding: 2px 8px; background: rgba(26,58,107,.08); color: var(--blue2); font-size: .69rem; font-weight: 600; border-radius: 99px; white-space: nowrap; }
-.kel-b  { display: inline-block; padding: 2px 8px; background: rgba(245,166,35,.1); color: #92650a; font-size: .65rem; font-weight: 600; border-radius: 99px; white-space: nowrap; margin-top: 3px; }
+.kec-b {font-size: .79rem; color: #1C1C1C; /* Blackboard */background: rgba(255,224,2,0.1); /* tetap pakai latar gold tipis */}
+.kel-b {font-size: .75rem;color: #1C1C1C; /* Blackboard */background: rgba(255,182,6,0.1); /* latar intense fire tipis */}
 .rtrw  { font-size: .73rem; color: var(--muted); white-space: nowrap; }
 .d1    { font-size: .76rem; font-weight: 600; color: var(--text); white-space: nowrap; }
 .d2    { font-size: .69rem; color: var(--muted); white-space: nowrap; }
 .tc    { font-size: .69rem; color: var(--muted); white-space: nowrap; }
-.nbadge { display: inline-block; font-size: .63rem; background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 99px; font-weight: 600; margin-top: 3px; }
+.nbadge { display: inline-block; font-size: .63rem; background: rgba(255,182,6,0.15); color: var(--gold-dark); padding: 1px 6px; border-radius: 99px; font-weight: 600; margin-top: 3px; }
 .fthumb { width: 36px; height: 36px; border-radius: 7px; object-fit: cover; border: 1.5px solid var(--border); display: block; }
 .nofoto { width: 36px; height: 36px; border-radius: 7px; background: var(--surf); border: 1.5px dashed #cdd2dc; display: flex; align-items: center; justify-content: center; }
 .btn-det { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; background: var(--navy); color: #fff; font-size: .7rem; font-weight: 600; border-radius: 7px; text-decoration: none; transition: background .2s; white-space: nowrap; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -41,14 +41,11 @@ tbody tr:hover { background: #f5f7ff; }
 
 /* Active filter pill */
 .filter-active {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 10px 3px 8px;
-    background: rgba(30,74,138,.08); color: var(--blue2);
-    border: 1px solid rgba(30,74,138,.2);
-    border-radius: 99px; font-size: .69rem; font-weight: 600;
-    text-decoration: none;
+    color: #1C1C1C; /* gelap */
+    background: rgba(255,224,2,0.1);
+    border-color: rgba(255,224,2,0.3);
 }
-.filter-active:hover { background: rgba(30,74,138,.14); }
+.filter-active:hover { background: rgba(255,224,2,0.2); }
 </style>
 @endpush
 
@@ -79,13 +76,16 @@ tbody tr:hover { background: #f5f7ff; }
                 @if(request('kecamatan'))
                     <span class="filter-active">Kec: {{ request('kecamatan') }}</span>
                 @endif
+                @if(request('kelurahan'))
+                    <span class="filter-active">Kel: {{ request('kelurahan') }}</span>
+                @endif
                 @if(request('rt'))
                     <span class="filter-active">RT: {{ (int)request('rt') }}</span>
                 @endif
                 @if(request('rw'))
                     <span class="filter-active">RW: {{ (int)request('rw') }}</span>
                 @endif
-                <a href="{{ route('admin.data') }}" class="filter-active" style="background:rgba(220,38,38,.07);color:var(--red);border-color:rgba(220,38,38,.2)">
+                <a href="{{ route('admin.data') }}" class="filter-active" style="background:rgba(178,130,40,0.1);color:var(--red);border-color:rgba(178,130,40,0.3)">
                     × Hapus semua
                 </a>
             </div>
@@ -104,13 +104,25 @@ tbody tr:hover { background: #f5f7ff; }
                     {{-- Kecamatan --}}
                     <div>
                         <label class="fl">Kecamatan</label>
-                        <select name="kecamatan" class="fi">
+                        <select name="kecamatan" id="filter-kecamatan" class="fi">
                             <option value="">Semua Kecamatan</option>
                             @foreach($kecamatans as $kec)
                                 <option value="{{ $kec->nama }}" {{ request('kecamatan') == $kec->nama ? 'selected' : '' }}>
                                     {{ $kec->nama }}
                                 </option>
                             @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Kelurahan — dinamis via AJAX --}}
+                    <div>
+                        <label class="fl">Kelurahan / Desa</label>
+                        <select name="kelurahan" id="filter-kelurahan" class="fi">
+                            <option value="">Semua Kelurahan</option>
+                            {{-- Jika ada filter kelurahan aktif, tampilkan sebagai opsi terpilih --}}
+                            @if(request('kelurahan'))
+                                <option value="{{ request('kelurahan') }}" selected>{{ request('kelurahan') }}</option>
+                            @endif
                         </select>
                     </div>
 
@@ -212,8 +224,11 @@ tbody tr:hover { background: #f5f7ff; }
                         <td><span class="nama">{{ $rumah->nama_pemilik }}</span></td>
                         <td>
                             <span class="kec-b">{{ $rumah->kecamatan }}</span>
+                            <br>
                             @if($rumah->kelurahan)
-                                <br><span class="kel-b">{{ $rumah->kelurahan }}</span>
+                                <span class="kel-b">{{ $rumah->kelurahan }}</span>
+                            @else
+                                <span style="font-size:.68rem;color:var(--muted);font-style:italic">— kelurahan</span>
                             @endif
                         </td>
                         <td><span class="rtrw">{{ $rumah->rt }} / {{ $rumah->rw }}</span></td>
@@ -278,6 +293,57 @@ function toggleDropdown(e) {
 document.addEventListener('click', function () {
     document.getElementById('wilayah-btn')?.classList.remove('open');
     document.getElementById('wilayah-menu')?.classList.remove('open');
+});
+
+// Fungsi untuk memuat kelurahan berdasarkan kecamatan
+function fetchKelurahan(kecamatanNama) {
+    const kelurahanSelect = document.getElementById('filter-kelurahan');
+    
+    // Reset dropdown
+    kelurahanSelect.innerHTML = '<option value="">Semua Kelurahan</option>';
+    
+    if (!kecamatanNama) {
+        return; // jika tidak ada kecamatan, berhenti
+    }
+
+    // Tampilkan loading (opsional)
+    kelurahanSelect.disabled = true;
+
+    fetch(`{{ route('admin.api.kelurahans') }}?kecamatan=${encodeURIComponent(kecamatanNama)}`)
+        .then(response => response.json())
+        .then(data => {
+            kelurahanSelect.disabled = false;
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.nama;
+                option.textContent = item.nama;
+                kelurahanSelect.appendChild(option);
+            });
+
+            // Set nilai selected jika ada parameter kelurahan di URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedKel = urlParams.get('kelurahan');
+            if (selectedKel) {
+                kelurahanSelect.value = selectedKel;
+            }
+        })
+        .catch(error => {
+            console.error('Gagal memuat kelurahan:', error);
+            kelurahanSelect.disabled = false;
+        });
+}
+
+// Event listener untuk perubahan kecamatan
+document.getElementById('filter-kecamatan').addEventListener('change', function() {
+    fetchKelurahan(this.value);
+});
+
+// Saat halaman dimuat, jika sudah ada kecamatan terpilih, muat kelurahan
+document.addEventListener('DOMContentLoaded', function() {
+    const kecamatanSelect = document.getElementById('filter-kecamatan');
+    if (kecamatanSelect.value) {
+        fetchKelurahan(kecamatanSelect.value);
+    }
 });
 </script>
 @endpush

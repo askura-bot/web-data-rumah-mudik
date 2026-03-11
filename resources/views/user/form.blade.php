@@ -1,4 +1,4 @@
-{{-- Views/user/form.blade.php --}}
+{{-- resources/Views/user/form.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Daftar Rumah Mudik — Kabupaten Semarang')
 
@@ -7,23 +7,24 @@
 /* ── Google Fonts ─────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-/* ── CSS Variables ────────────────────────────── */
+/* ── CSS Variables – Color Palette Baru ───────── */
 :root {
-    --teal:      #0f6b5c;
-    --teal-mid:  #148a73;
-    --teal-light:#e6f4f1;
-    --gold:      #c9932a;
-    --gold-light:#fdf3e0;
-    --cream:     #faf7f2;
-    --ink:       #1a1a2e;
-    --muted:     #6b7280;
+    --primary:       #D70608;   /* merah terang */
+    --primary-dark:  #E60102;   /* merah lebih gelap */
+    --accent:        #DB8138;   /* oranye/karat */
+    --accent-light:  #FDCFB8;   /* peach muda */
+    --light-bg:      #FDFDFE;   /* putih bersih */
+    --ink:           #1a1a2e;
+    --muted:         #6b7280;
+
+    --primary-rgb:   215, 6, 8; /* rgb(215,6,8) */
 }
 
-body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background: var(--light-bg); font-family: 'Plus Jakarta Sans', sans-serif; }
 
 /* ── Hero ─────────────────────────────────────── */
 .hero {
-    background: var(--teal);
+    background: var(--primary);
     position: relative;
     overflow: hidden;
     padding: 3rem 1rem 5rem;
@@ -44,7 +45,7 @@ body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
     position: absolute;
     top: -60px; right: -60px;
     width: 280px; height: 280px;
-    background: radial-gradient(circle, rgba(201,147,42,0.25) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(219,129,56,0.25) 0%, transparent 70%);
     border-radius: 50%;
 }
 
@@ -60,9 +61,9 @@ body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(201,147,42,0.2);
-    border: 1px solid rgba(201,147,42,0.4);
-    color: #f0c96a;
+    background: rgba(219,129,56,0.2);   /* accent dengan opacity */
+    border: 1px solid rgba(219,129,56,0.4);
+    color: #fff;                         /* teks putih agar kontras */
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -95,7 +96,10 @@ body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
     position: absolute;
     z-index: 1;
 }
-.star-deco svg { opacity: 0.3; }
+.star-deco svg {
+    opacity: 0.3;
+    stroke: var(--accent);  /* warna oranye */
+}
 
 /* ── Step Cards ───────────────────────────────── */
 .step-card {
@@ -113,7 +117,7 @@ body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--teal), var(--gold));
+    background: linear-gradient(90deg, var(--primary), var(--accent));
     border-radius: 20px 20px 0 0;
 }
 
@@ -135,13 +139,13 @@ body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
 }
 .step-num {
     width: 28px; height: 28px;
-    background: linear-gradient(135deg, var(--teal), var(--teal-mid));
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 800;
     flex-shrink: 0;
-    box-shadow: 0 2px 6px rgba(15,107,92,0.35);
+    box-shadow: 0 2px 6px rgba(var(--primary-rgb), 0.35);
 }
 .step-num.optional {
     background: linear-gradient(135deg, #9ca3af, #6b7280);
@@ -183,8 +187,8 @@ body { background: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; }
     appearance: none;
 }
 .field-input:focus {
-    border-color: var(--teal-mid);
-    box-shadow: 0 0 0 3px rgba(20,138,115,0.12);
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 3px rgba(230,1,2,0.12);  /* primary-dark dengan opacity */
 }
 .field-input.error { border-color: #f87171; }
 .field-input.readonly {
@@ -218,7 +222,7 @@ select.field-input {
     font-size: 0.875rem;
     color: #6b7280;
 }
-.locked-field .lock-icon { color: var(--teal-mid); flex-shrink: 0; }
+.locked-field .lock-icon { color: var(--primary-dark); flex-shrink: 0; }
 
 /* ── Peta ─────────────────────────────────────── */
 #map {
@@ -236,11 +240,11 @@ select.field-input {
 .coord-item {
     flex: 1;
     padding: 8px 12px;
-    background: var(--teal-light);
-    border: 1px solid rgba(15,107,92,0.15);
+    background: var(--accent-light);      /* peach */
+    border: 1px solid rgba(215,6,8,0.15);  /* primary dengan opacity */
     border-radius: 10px;
 }
-.coord-label { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.05em; }
+.coord-label { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; }
 .coord-value { font-size: 12px; color: #374151; margin-top: 2px; font-family: monospace; }
 
 .geocode-spinner {
@@ -248,14 +252,14 @@ select.field-input {
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    color: var(--teal-mid);
+    color: var(--primary-dark);
     font-weight: 600;
 }
 .geocode-spinner.active { display: flex; }
 .spinner-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: var(--teal-mid);
+    background: var(--primary-dark);
     animation: pulse 1.2s ease-in-out infinite;
 }
 .spinner-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -276,15 +280,15 @@ select.field-input {
     position: relative;
 }
 .upload-zone:hover {
-    border-color: var(--teal-mid);
-    background: var(--teal-light);
+    border-color: var(--primary-dark);
+    background: var(--accent-light);
 }
-.upload-zone.has-file { border-style: solid; border-color: var(--teal-mid); }
+.upload-zone.has-file { border-style: solid; border-color: var(--primary-dark); }
 
 /* ── Submit Button ────────────────────────────── */
 .btn-submit {
     width: 100%;
-    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-mid) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     font-weight: 700;
     font-size: 0.95rem;
@@ -297,7 +301,7 @@ select.field-input {
     justify-content: center;
     gap: 8px;
     transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 6px 20px rgba(15,107,92,0.35);
+    box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.35);
     position: relative;
     overflow: hidden;
 }
@@ -305,11 +309,11 @@ select.field-input {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(201,147,42,0.15), transparent);
+    background: linear-gradient(135deg, rgba(219,129,56,0.15), transparent);
     opacity: 0;
     transition: opacity 0.2s;
 }
-.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15,107,92,0.4); }
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.4); }
 .btn-submit:hover::before { opacity: 1; }
 .btn-submit:active { transform: translateY(0); }
 
@@ -331,6 +335,24 @@ select.field-input {
     padding-bottom: 2rem;
 }
 
+.logo-circle {
+    width: 140px;
+    height: 140px;
+    background: var(--light-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border: 2px solid var(--accent); /* biar tidak menyatu */
+}
+.logo-circle img {
+    width: 70%; /* atau atur sesuai */
+    height: auto;
+    object-fit: contain;
+}
+
 /* ── Responsive ───────────────────────────────── */
 @media (max-width: 640px) {
     .step-card { padding: 1.25rem; }
@@ -343,19 +365,19 @@ select.field-input {
 @section('content')
 
 {{-- ══════════════════════════════════════════════
-     HERO HEADER
+     HERO HEADER with LOGO
 ══════════════════════════════════════════════ --}}
 <div class="hero">
 
     {{-- Ornamen bintang --}}
     <div class="star-deco" style="top:16px;left:16px">
-        <svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="#c9932a" stroke-width="1.5"/></svg>
+        <svg width="40" height="40" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>
     </div>
     <div class="star-deco" style="bottom:60px;left:10%">
-        <svg width="24" height="24" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="#c9932a" stroke-width="1.5"/></svg>
+        <svg width="24" height="24" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>
     </div>
     <div class="star-deco" style="top:30px;right:12%">
-        <svg width="32" height="32" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="#c9932a" stroke-width="1.5"/></svg>
+        <svg width="32" height="32" viewBox="0 0 40 40"><polygon points="20,2 24,14 37,14 27,22 31,35 20,27 9,35 13,22 3,14 16,14" fill="none" stroke="var(--accent)" stroke-width="1.5"/></svg>
     </div>
 
     <div style="max-width:640px;margin:0 auto;text-align:center;position:relative;z-index:2">
@@ -363,38 +385,23 @@ select.field-input {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             Lebaran 1446 H
         </div>
+        <div class="logo-circle">
+            <img src="{{ asset('image/logo-libas.png') }}" alt="Logo Polrestabes Semarang">
+        </div>
         <h1>Titipkan Keamanan<br>Rumah Anda</h1>
         <p>Daftarkan rumah yang ditinggal mudik agar dapat<br>dipantau oleh petugas keamanan setempat</p>
-
-        {{-- Statistik kecil --}}
-        <div style="display:flex;justify-content:center;gap:2rem;margin-top:1.5rem;position:relative;z-index:1">
-            <div style="text-align:center">
-                <div style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:#f0c96a">✓</div>
-                <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">Gratis</div>
-            </div>
-            <div style="width:1px;background:rgba(255,255,255,0.15)"></div>
-            <div style="text-align:center">
-                <div style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:#f0c96a">🏠</div>
-                <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">Mudah & Cepat</div>
-            </div>
-            <div style="width:1px;background:rgba(255,255,255,0.15)"></div>
-            <div style="text-align:center">
-                <div style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:#f0c96a">🛡</div>
-                <div style="font-size:0.7rem;color:rgba(255,255,255,0.6);margin-top:2px">Terpantau</div>
-            </div>
-        </div>
     </div>
 
     {{-- Wave SVG --}}
     <div class="hero-wave">
         <svg viewBox="0 0 1440 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0,48 L0,24 C240,0 480,48 720,24 C960,0 1200,48 1440,24 L1440,48 Z" fill="#faf7f2"/>
+            <path d="M0,48 L0,24 C240,0 480,48 720,24 C960,0 1200,48 1440,24 L1440,48 Z" fill="var(--light-bg)"/>
         </svg>
     </div>
 </div>
 
 {{-- ══════════════════════════════════════════════
-     FORM
+     FORM (konten sama, hanya warna menyesuaikan variabel)
 ══════════════════════════════════════════════ --}}
 <div style="max-width:640px;margin:0 auto;padding:2rem 1rem;">
 
@@ -558,7 +565,6 @@ select.field-input {
                             class="field-input @error('kelurahan_id') error @enderror"
                             disabled required>
                             <option value="">— Pilih kecamatan dulu —</option>
-                            {{-- Jika ada old value (setelah validation error), opsi akan diisi JS --}}
                         </select>
                         {{-- Spinner saat loading --}}
                         <div id="kel_spinner" style="
@@ -606,8 +612,8 @@ select.field-input {
             </div>
 
             {{-- Info banner --}}
-            <div style="margin-top:1rem;display:flex;gap:10px;padding:10px 14px;background:var(--gold-light);border-radius:10px;border:1px solid rgba(201,147,42,0.25)">
-                <svg style="flex-shrink:0;margin-top:1px" width="16" height="16" fill="none" stroke="#c9932a" viewBox="0 0 24 24">
+            <div style="margin-top:1rem;display:flex;gap:10px;padding:10px 14px;background:var(--accent-light);border-radius:10px;border:1px solid rgba(219,129,56,0.25)">
+                <svg style="flex-shrink:0;margin-top:1px" width="16" height="16" fill="none" stroke="var(--accent)" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <p style="font-size:0.75rem;color:#92650a;line-height:1.5">
@@ -629,12 +635,12 @@ select.field-input {
             <div class="upload-zone" id="upload-zone" onclick="document.getElementById('foto_rumah').click()">
                 {{-- State: processing --}}
                 <div id="foto_processing" style="display:none">
-                    <div style="width:48px;height:48px;border-radius:12px;background:var(--teal-light);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" style="animation:spin 1s linear infinite">
+                    <div style="width:48px;height:48px;border-radius:12px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" style="animation:spin 1s linear infinite">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                         </svg>
                     </div>
-                    <p style="font-size:0.85rem;font-weight:600;color:var(--teal)">Mengompres gambar...</p>
+                    <p style="font-size:0.85rem;font-weight:600;color:var(--primary)">Mengompres gambar...</p>
                 </div>
 
                 {{-- State: preview --}}
@@ -652,8 +658,8 @@ select.field-input {
 
                 {{-- State: placeholder --}}
                 <div id="foto_placeholder">
-                    <div style="width:48px;height:48px;background:var(--teal-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
-                        <svg width="22" height="22" fill="none" stroke="var(--teal)" viewBox="0 0 24 24">
+                    <div style="width:48px;height:48px;background:var(--accent-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                        <svg width="22" height="22" fill="none" stroke="var(--primary)" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
@@ -692,6 +698,8 @@ document.addEventListener('DOMContentLoaded', function () {
 // ─── Peta Leaflet ─────────────────────────────────────────────────────────────
 let map, marker;
 const defaultCenter = [-7.1751, 110.4028]; // Kabupaten Semarang
+const primaryColor = '#D70608';
+const primaryDark  = '#E60102';
 
 function initMap(lat, lng) {
     map = L.map('map', { zoomControl: true }).setView([lat, lng], 16);
@@ -704,11 +712,11 @@ function initMap(lat, lng) {
     const icon = L.divIcon({
         html: `<div style="
             width:32px;height:32px;
-            background:linear-gradient(135deg,#0f6b5c,#148a73);
+            background:linear-gradient(135deg, ${primaryColor}, ${primaryDark});
             border-radius:50% 50% 50% 0;
             transform:rotate(-45deg);
             border:3px solid white;
-            box-shadow:0 3px 10px rgba(15,107,92,0.5)">
+            box-shadow:0 3px 10px rgba(215,6,8,0.5)">
         </div>`,
         iconSize: [32, 32], iconAnchor: [16, 32],
         className: '',
@@ -770,16 +778,15 @@ if (navigator.geolocation) {
     initMap(...defaultCenter);
 }
 
+// ─── AJAX untuk Kelurahan (sama seperti sebelumnya) ──────────────────────────
 (function () {
     const kecSelect = document.getElementById('kecamatan_select');
     const kelSelect = document.getElementById('kelurahan_select');
     const spinner   = document.getElementById('kel_spinner');
 
-    // old value dari Laravel (setelah redirect with errors)
     const oldKelId  = {{ old('kelurahan_id') ? old('kelurahan_id') : 'null' }};
 
     async function loadKelurahans(kecamatanId) {
-        // Reset
         kelSelect.innerHTML  = '<option value="">Memuat...</option>';
         kelSelect.disabled   = true;
         spinner.style.display = 'flex';
@@ -822,29 +829,26 @@ if (navigator.geolocation) {
         loadKelurahans(this.value);
     });
 
-    // Jika ada old kecamatan_id (redirect setelah error validasi), auto-load kelurahan
     const oldKecId = kecSelect.value;
     if (oldKecId) loadKelurahans(oldKecId);
 }());
 
-// ─── Kompresi & Preview Foto (Canvas API) ─────────────────────────────────────
-const MAX_WIDTH    = 1280;   // px — lebar maksimum output
-const MAX_HEIGHT   = 1280;   // px — tinggi maksimum output
-const QUALITY      = 0.80;   // 0–1 kualitas JPEG (0.80 = cukup tajam, ukuran kecil)
-const MAX_SIZE_MB  = 1.5;    // jika setelah kompres masih > ini, turunkan quality
+// ─── Kompresi & Preview Foto (sama, hanya warna disesuaikan di CSS) ──────────
+const MAX_WIDTH    = 1280;
+const MAX_HEIGHT   = 1280;
+const QUALITY      = 0.80;
+const MAX_SIZE_MB  = 1.5;
 
 document.getElementById('foto_rumah').addEventListener('change', function () {
     const file = this.files?.[0];
     if (!file) return;
 
-    // Validasi tipe
     if (!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)) {
         alert('Format file tidak didukung. Gunakan JPG, PNG, atau WebP.');
         this.value = '';
         return;
     }
 
-    // Tampilkan loading
     document.getElementById('foto_placeholder').style.display  = 'none';
     document.getElementById('foto_preview').style.display      = 'none';
     document.getElementById('foto_processing').style.display   = 'block';
@@ -856,7 +860,6 @@ document.getElementById('foto_rumah').addEventListener('change', function () {
     reader.onload = function (e) {
         const img = new Image();
         img.onload = function () {
-            // ── Hitung dimensi output (jaga rasio) ──────────────────────
             let { width, height } = img;
             if (width > MAX_WIDTH || height > MAX_HEIGHT) {
                 const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
@@ -864,23 +867,19 @@ document.getElementById('foto_rumah').addEventListener('change', function () {
                 height = Math.round(height * ratio);
             }
 
-            // ── Gambar ke canvas ─────────────────────────────────────────
             const canvas = document.createElement('canvas');
             canvas.width  = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
 
-            // Latar putih (hindari transparan pada PNG → JPEG)
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, width, height);
             ctx.drawImage(img, 0, 0, width, height);
 
-            // ── Kompres ke JPEG, turunkan quality jika masih besar ───────
             let quality    = QUALITY;
             let dataUrl    = canvas.toDataURL('image/jpeg', quality);
             let compressedBytes = atob(dataUrl.split(',')[1]).length;
 
-            // Iterasi turunkan quality jika > MAX_SIZE_MB
             while (compressedBytes > MAX_SIZE_MB * 1024 * 1024 && quality > 0.3) {
                 quality  -= 0.05;
                 dataUrl   = canvas.toDataURL('image/jpeg', quality);
@@ -890,10 +889,8 @@ document.getElementById('foto_rumah').addEventListener('change', function () {
             const compressedSizeKB = (compressedBytes / 1024).toFixed(1);
             const savingPct = Math.round((1 - compressedBytes / file.size) * 100);
 
-            // ── Isi hidden input (dikirim ke server) ─────────────────────
             document.getElementById('foto_rumah_compressed').value = dataUrl;
 
-            // ── Tampilkan preview + info ukuran ──────────────────────────
             document.getElementById('preview_img').src = dataUrl;
             document.getElementById('size_before').textContent  = originalSizeKB + ' KB';
             document.getElementById('size_after').textContent   = compressedSizeKB + ' KB';

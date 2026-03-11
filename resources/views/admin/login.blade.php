@@ -1,4 +1,3 @@
-{{-- Views/admin/login --}}
 @extends('layouts.AdminLayout')
 @section('title', 'Login — Sistem Patroli Mudik')
 
@@ -7,12 +6,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-    --navy:    #0a1628;
-    --navy2:   #0f2040;
-    --blue:    #1a3a6b;
-    --accent:  #f5a623;
-    --danger:  #e53e3e;
-    --cream:   #f8f9fb;
+    --navy:     #1C1C1C;   /* Blackboard */
+    --navy2:    #3B3B3B;   /* Rich Grey */
+    --accent:   #FFE002;   /* Golden Yellow */
+    --accent2:  #FFB606;   /* Intense Fire */
+    --gold-dark:#B28228;   /* University of California Gold */
+    --danger:   #e53e3e;   /* merah untuk error (tetap) */
+    --cream:    #f8f9fb;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,9 +28,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
     position: relative;
     overflow: hidden;
     background:
-        radial-gradient(ellipse at 20% 50%, rgba(26,58,107,0.6) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(245,166,35,0.08) 0%, transparent 50%),
-        linear-gradient(160deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+        radial-gradient(ellipse at 20% 50%, rgba(59,59,59,0.6) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(255,182,6,0.08) 0%, transparent 50%),
+        linear-gradient(160deg, #1C1C1C 0%, #2A2A2A 50%, #1C1C1C 100%);
 }
 
 /* Grid pattern */
@@ -52,7 +52,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
     bottom: -100px; right: -100px;
     width: 400px; height: 400px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(245,166,35,0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,182,6,0.06) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -79,12 +79,12 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
 }
 .badge-logo {
     width: 52px; height: 52px;
-    background: linear-gradient(135deg, #1a3a6b, #0f2040);
-    border: 2px solid rgba(245,166,35,0.4);
     border-radius: 14px;
     display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, var(--accent2), var(--gold-dark));
     box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
 }
+
 .badge-text { text-align: left; }
 .badge-title {
     font-family: 'Barlow Condensed', sans-serif;
@@ -173,9 +173,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
 }
 .pw-input::placeholder { color: rgba(255,255,255,0.2); }
 .pw-input:focus {
-    border-color: rgba(245,166,35,0.5);
+    border-color: var(--accent2);
     background: rgba(255,255,255,0.08);
-    box-shadow: 0 0 0 3px rgba(245,166,35,0.1);
+    box-shadow: 0 0 0 3px rgba(255,182,6,0.15);
 }
 .pw-input.is-error { border-color: rgba(229,62,62,0.6); }
 
@@ -191,7 +191,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
     padding: 4px;
     border-radius: 6px;
 }
-.toggle-pw:hover { color: rgba(255,255,255,0.7); }
+.toggle-pw:hover { color: var(--accent2); }
 
 .error-msg {
     font-size: 0.72rem;
@@ -220,8 +220,8 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
 .btn-login {
     width: 100%;
     padding: 13px;
-    background: linear-gradient(135deg, #1a3a6b 0%, #1e4a8a 100%);
-    border: 1px solid rgba(245,166,35,0.3);
+    background: linear-gradient(135deg, var(--navy2), var(--navy));
+    border: 1px solid var(--accent2);
     border-radius: 12px;
     color: #fff;
     font-family: 'Barlow Condensed', sans-serif;
@@ -235,19 +235,18 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
     justify-content: center;
     gap: 8px;
     transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-    box-shadow: 0 4px 16px rgba(26,58,107,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 .btn-login:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(26,58,107,0.6);
-    background: linear-gradient(135deg, #1e4a8a 0%, #2255a4 100%);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    background: linear-gradient(135deg, var(--navy), #222);
 }
-.btn-login:active { transform: translateY(0); }
 
 /* Accent strip atas card */
 .accent-strip {
     height: 3px;
-    background: linear-gradient(90deg, #f5a623, #fbbf24, #f5a623);
+    background: linear-gradient(90deg, var(--accent2), var(--gold-dark), var(--accent2));
     border-radius: 20px 20px 0 0;
     margin: -2rem -2rem 2rem;
     border-top-left-radius: 20px;
@@ -268,7 +267,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #f5a623 0%, #fbbf24 50%, #f5a623 100%);
+    background: linear-gradient(90deg, var(--accent2) 0%, var(--gold-dark) 50%, var(--accent2) 100%);
     z-index: 100;
 }
 </style>
@@ -282,12 +281,10 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--navy); mi
         {{-- Logo instansi --}}
         <div class="instansi-badge">
             <div class="badge-logo">
-                <svg width="26" height="26" fill="none" viewBox="0 0 24 24">
-                    <path fill="#f5a623" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
-                </svg>
+                <img src="{{ asset('image/logo-libas.png') }}" alt="Logo Polrestabes Semarang">
             </div>
             <div class="badge-text">
-                <div class="badge-title">Sistem Patroli Mudik</div>
+                <div class="badge-title">Sistem Patroli Mudik Libas</div>
                 <div class="badge-sub">Kabupaten Semarang · Lebaran 1446 H</div>
             </div>
         </div>
@@ -379,7 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
         input.type     = visible ? 'text' : 'password';
         eyeOn.style.display  = visible ? 'none'  : 'block';
         eyeOff.style.display = visible ? 'block' : 'none';
-        btn.style.color = visible ? 'rgba(245,166,35,0.8)' : 'rgba(255,255,255,0.3)';
+        btn.style.color = visible ? 'var(--accent2)' : 'rgba(255,255,255,0.3)';
     });
 });
 </script>
